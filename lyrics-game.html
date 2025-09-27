@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lausse Hub - Lyric Game</title>
+    <link rel="stylesheet" href="game-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="game-container">
+        <h1 id="game-title">Guess the Lyric</h1>
+        <p id="game-instruction">Type the missing word from the lyric below.</p>
+        
+        <div class="scores">
+            <p>Score: <span id="score">0</span></p>
+            <p>High Score: <span id="high-score">0</span></p>
+        </div>
+
+        <div class="lyric-display">
+            <audio id="song-clip" controls></audio>
+            <p id="lyric-container" class="lyric"></p>
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="guess-input" placeholder="Type your guess here...">
+            <button id="submit-guess">Submit</button>
+        </div>
+
+        <p id="feedback"></p>
+
+        <button id="next-lyric" style="display: none;">Next Lyric</button>
+
+        <a href="index.html" class="back-link">← Back to Timeline</a>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

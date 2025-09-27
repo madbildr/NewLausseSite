@@ -1,0 +1,111 @@
+body {
+    margin: 0;
+    font-family: 'Libre Franklin', sans-serif;
+    background-color: #121212;
+    color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.game-container {
+    text-align: center;
+    background-color: #1e1e1e;
+    padding: 2rem 3rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    width: 90%;
+    max-width: 600px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.scores {
+    display: flex;
+    justify-content: space-around;
+    font-size: 1.2rem;
+    background-color: #282828;
+    padding: 0.5rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+#song-clip {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.lyric {
+    font-size: 1.5rem;
+    font-style: italic;
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+}
+
+.lyric .blank {
+    font-weight: bold;
+    color: #1DB954; /* Spotify green for a highlight */
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+}
+
+#guess-input {
+    flex-grow: 1;
+    padding: 15px;
+    font-size: 1rem;
+    border: 1px solid #555;
+    background-color: #282828;
+    color: white;
+    border-radius: 8px;
+}
+
+#submit-guess, #next-lyric {
+    padding: 15px 25px;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    background-color: #1DB954;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+#submit-guess:hover, #next-lyric:hover {
+    background-color: #1ed760;
+}
+
+#feedback {
+    min-height: 24px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+#feedback.correct {
+    color: #1DB954; /* Green for correct */
+}
+
+#feedback.incorrect {
+    color: #e53e3e; /* Red for incorrect */
+}
+
+.back-link {
+    display: inline-block;
+    margin-top: 2rem;
+    color: #aaa;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.back-link:hover {
+    color: white;
+}
