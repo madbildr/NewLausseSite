@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "front-left",
         "song": "Ca Va Bien (ft. lausse the cat)                       ***FREE DOWNLOAD***",
-        "audioSrc": "assets/ca_va_bien_ft_lausse_the_cat_free_download_instrumental.wav",
+        "audioSrc": "assets/ca_va_bien_ft_lausse_the_cat_free_download_instrumental.mp3",
         "lyrics": [
             "Lower. Lower. Lower. Lower. Lower. Lower. Lower.",
             "Lower.",
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "front-left",
         "song": "Wurlitzer Ready",
-        "audioSrc": "assets/wurlitzer_ready_instrumental.wav",
+        "audioSrc": "assets/wurlitzer_ready_instrumental.mp3",
         "lyrics": [
             "Yeah.",
             "I'm.",
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "Ross Wilson",
         "song": "BlossomHillGang (ft. Lausse The Cat)",
-        "audioSrc": "assets/blossomhillgang_ft_lausse_the_cat_instrumental.wav",
+        "audioSrc": "assets/blossomhillgang_ft_lausse_the_cat_instrumental.mp3",
         "lyrics": [
             "Yeah, yeah, yeah. Ça va.",
             "Yeah, yeah, yeah. Ça va.",
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "Don Papa 海賊",
         "song": "Lotus Blossom [tape 2]",
-        "audioSrc": "assets/lotus_blossom_tape_2_instrumental.wav",
+        "audioSrc": "assets/lotus_blossom_tape_2_instrumental.mp3",
         "lyrics": [
             "Hear you. Presenting to you Don Papa. A.K.A. Al-Pi-ha. Al-Pirate. A.K.A. Rachel Green.",
             "Lausse Hummery 95. On the night school. Enjoy.",
@@ -238,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "Ciao Bella",
-        "audioSrc": "assets/ciao_bella_instrumental.wav",
+        "audioSrc": "assets/ciao_bella_instrumental.mp3",
         "lyrics": [
             "Little Red rides down the lip and my lover now must've sniffed a badly crushed pill",
             "should've wolfed it down. Caution now, come kiss the water. How much dis does one chick",
@@ -271,7 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "Redstripe Rhapsody",
-        "audioSrc": "assets/redstripe_rhapsody_instrumental.wav",
+        "audioSrc": "assets/redstripe_rhapsody_instrumental.mp3",
         "lyrics": [
             "I will just look.",
             "Where do you even go?",
@@ -389,7 +389,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "zinfandel rosé",
-        "audioSrc": "assets/zinfandel_rosé_instrumental.wav",
+        "audioSrc": "assets/zinfandel_rosé_instrumental.mp3",
         "lyrics": [
             "Me and my friends, yeah we get f**ked up in the same damn place with the same old drugs.",
             "Set me dream dream, that's the sound of my belt and I need to go purchase some white Pidil.",
@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "wag1 pelican",
-        "audioSrc": "assets/wag1_pelican_instrumental.wav",
+        "audioSrc": "assets/wag1_pelican_instrumental.mp3",
         "lyrics": [
             "Many moons are passed since the curse, getting used to living heartless and it's harder than",
             "it's hard. The only time I feel a little feeling in my chest is when I swallow down the rum.",
@@ -456,7 +456,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "alone together",
-        "audioSrc": "assets/alone_together_instrumental.wav",
+        "audioSrc": "assets/alone_together_instrumental.mp3",
         "lyrics": [
             "Hey. Lausse the Cat. Lausse the Cat. Blem.",
             "Red.",
@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "the cat and la lune",
-        "audioSrc": "assets/the_cat_and_la_lune_instrumental.wav",
+        "audioSrc": "assets/the_cat_and_la_lune_instrumental.mp3",
         "lyrics": [
             "This song is called The Cat and the Moon.",
             "Can you spell it?",
@@ -568,7 +568,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "Coco Channel ft. B-ahwe",
-        "audioSrc": "assets/coco_channel_ft_b_ahwe_instrumental.wav",
+        "audioSrc": "assets/coco_channel_ft_b_ahwe_instrumental.mp3",
         "lyrics": [
             "When cats go blue, they know better than to stay in one place.",
             "It is common for you-eye knowledge that in order to lighten the weight of a metal lump,",
@@ -618,7 +618,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "go back to",
-        "audioSrc": "assets/go_back_to_instrumental.wav",
+        "audioSrc": "assets/go_back_to_instrumental.mp3",
         "lyrics": [
             "I'm sorry, Mama. I'm sorry. Don't worry, Mama.",
             "I guess I'll say goodbye then. I'll catch a train tonight then.",
@@ -646,7 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "the cat who came for tea",
-        "audioSrc": "assets/the_cat_who_came_for_tea_instrumental.wav",
+        "audioSrc": "assets/the_cat_who_came_for_tea_instrumental.mp3",
         "lyrics": [
             "Yeah mate, I think someone's had a go. That's the Cat. Hello little Cat. Come here. What's",
             "wrong? Nothing. Dream dark and heavy whilst my slumber is late. My pillow forms the silhouette",
@@ -681,7 +681,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "kitten blues",
-        "audioSrc": "assets/kitten_blues_instrumental.wav",
+        "audioSrc": "assets/kitten_blues_instrumental.mp3",
         "lyrics": [
             "Friday, November, at 11.30.",
             "A.M.",
@@ -709,7 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "6. BELLE BOUTEILLE",
-        "audioSrc": "assets/6_belle_bouteille_instrumental.wav",
+        "audioSrc": "assets/6_belle_bouteille_instrumental.mp3",
         "lyrics": [
             "Hey man, do you think you could lend me a bit of cash?",
             "12 foot 2 bottles of red wine, 10 foot bends of hash.",
@@ -755,8 +755,8 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
         "artist": "Nix Northwest",
-        "song": "Waves (Feat. LAUSSE THE CAT)",
-        "audioSrc": "assets/waves_feat_lausse_the_cat_instrumental.wav",
+        "song": "waves (Feat. LAUSSE THE CAT)",
+        "audioSrc": "assets/waves_feat_lausse_the_cat_instrumental.mp3",
         "lyrics": [
             "It was all a dream way back when we were young nothing mattered back then now I'm sitting",
             "here far from the carefree ways of our past days trying to make change with a pen can't",
@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "B-ahwe",
         "song": "Blue print - B-ahwe (prod. Lausse the Cat)",
-        "audioSrc": "assets/blue_print_b_ahwe_prod_lausse_the_cat_instrumental.wav",
+        "audioSrc": "assets/blue_print_b_ahwe_prod_lausse_the_cat_instrumental.mp3",
         "lyrics": [
             "Watch the Blossoms Fall. I finally rose from a slumber.",
             "The cage walls tried to keep me, but I know that I always seek much more seed.",
@@ -821,7 +821,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "TAMBALA",
         "song": "captain morgan's tale (ft. lausse the cat)",
-        "audioSrc": "assets/captain_morgans_tale_ft_lausse_the_cat_instrumental.wav",
+        "audioSrc": "assets/captain_morgans_tale_ft_lausse_the_cat_instrumental.mp3",
         "lyrics": [
             "What's up? It's your h.",
             "And? Dancing in moonlight.",
@@ -874,7 +874,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "calvin",
         "song": "Lausse The Cat - Intro",
-        "audioSrc": "assets/lausse_the_cat_intro_instrumental.wav",
+        "audioSrc": "assets/lausse_the_cat_intro_instrumental.mp3",
         "lyrics": [
             "Music videos are copy paste from mink. Everything's out on Thursday.",
             "Bandcamp's spot on friar YouTube. And this is just a promo track so I've downloaded it before it gets deleted.",
@@ -898,7 +898,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "illiterate.",
         "song": "catching moths feat. lausse the cat",
-        "audioSrc": "assets/catching_moths_feat_lausse_the_cat_instrumental.wav",
+        "audioSrc": "assets/catching_moths_feat_lausse_the_cat_instrumental.mp3",
         "lyrics": [
             "I tried to run. And I tried to fall. Bum. Dum. Bum. You. Wasted. The place of mine. I let you down.",
             "Sir?",
@@ -927,7 +927,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "3. TOY'S STORY",
-        "audioSrc": "assets/3_toys_story_instrumental.wav",
+        "audioSrc": "assets/3_toys_story_instrumental.mp3",
         "lyrics": [
             "Once upon a time in the place, there lived a gang of boys who would barter with fate.",
             "Pissed about avoiding the start of the day when things get annoying like bills on low-paid shifts.",
@@ -970,7 +970,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "Blaiz",
         "song": "Calin (feat. LAUSSE THE CAT)",
-        "audioSrc": "assets/calin_feat_lausse_the_cat_instrumental.wav",
+        "audioSrc": "assets/calin_feat_lausse_the_cat_instrumental.mp3",
         "lyrics": [
             "Olé.",
             "On qui tu pourrais donner ta vie de fois",
@@ -1030,7 +1030,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "apltn",
         "song": "apltn x MakOto - If It Was Easy(feat. B-ahwe & LAUSSE THE CAT)",
-        "audioSrc": "assets/apltn_x_makoto_if_it_was_easyfeat_b_ahwe_lausse_the_cat_instrumental.wav",
+        "audioSrc": "assets/apltn_x_makoto_if_it_was_easyfeat_b_ahwe_lausse_the_cat_instrumental.mp3",
         "lyrics": [
             "Something that I need to do. Let that by the notes which trickle through. And it leads me there. Winding but kinder, perplexed by the old stairs. Pulling back the sides to breathe.",
             "I could decide it was easy deciphering all of the bullshit around me. The pulse in between me and where my true breathing breaks through. And it could be sure. Sharpest the tongue that led me through when I'm blue.",
@@ -1047,7 +1047,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "Blu Man",
         "song": "Le Soir Bleu",
-        "audioSrc": "assets/le_soir_bleu_instrumental.wav",
+        "audioSrc": "assets/le_soir_bleu_instrumental.mp3",
         "lyrics": [
             "Lausse the Cat.",
             "Butter's? Uh oh. Hey, Cache Dan. What's the matter with you? Well, my g-girlfriend broke up with me.",
@@ -1062,7 +1062,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "Max limbrick",
         "song": "Lausse The Cat - Park bench (rare)",
-        "audioSrc": "assets/lausse_the_cat_park_bench_rare_instrumental.wav",
+        "audioSrc": "assets/lausse_the_cat_park_bench_rare_instrumental.mp3",
         "lyrics": [
             "B-ahwe.",
             "Nice bumper.",
@@ -1085,7 +1085,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "Nix Northwest",
         "song": "When It Rains (feat. B-ahwe & LAUSSE THE CAT)",
-        "audioSrc": "assets/when_it_rains_feat_b_ahwe_lausse_the_cat_instrumental.wav",
+        "audioSrc": "assets/when_it_rains_feat_b_ahwe_lausse_the_cat_instrumental.mp3",
         "lyrics": [
             "Fand something out behind me from the Red contrad jetzt.",
             "Lek.",
@@ -1130,7 +1130,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "LAUSSE THE CAT",
         "song": "The Girl, The Cat And The Tree",
-        "audioSrc": "assets/the_girl_the_cat_and_the_tree_instrumental.wav",
+        "audioSrc": "assets/the_girl_the_cat_and_the_tree_instrumental.mp3",
         "lyrics": [
             "If Demons, Goblins, Ghosts and Ghouls would stumble to where my soul resides, in some",
             "estate to steal and f**k the thoughts I buried once as a child, I'd wake to say grenade",
@@ -1417,7 +1417,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
         "artist": "alejandringui",
         "song": "Don Papa & Lausse The Cat - o o l o n g",
-        "audioSrc": "assets/don_papa_lausse_the_cat_o_o_l_o_n_g_instrumental.wav",
+        "audioSrc": "assets/don_papa_lausse_the_cat_o_o_l_o_n_g_instrumental.mp3",
         "lyrics": [
             "No.",
             "Kristen B.",
