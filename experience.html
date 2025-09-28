@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Story Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Press Start 2P', cursive;
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            overflow: hidden;
+        }
+        .hidden {
+            display: none !important; /* Force hide */
+        }
+        #game-container {
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            transition: background-image 0.5s ease-in-out;
+            image-rendering: pixelated;
+        }
+        .action-button, .nav-button, #start-button, .menu-button {
+            transition: all 0.2s ease;
+            border: 4px solid #4a4a4a;
+            background-color: #333;
+            text-shadow: 2px 2px #000;
+        }
+        .action-button:hover, .nav-button:hover, #start-button:hover, .menu-button:hover {
+            background-color: #f0f0f0;
+            color: #1a1a1a;
+            border-color: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0px 4px 8px rgba(0,0,0,0.5);
+        }
+        .action-button:active, .nav-button:active, #start-button:active, .menu-button:active {
+            transform: translateY(0);
+        }
+        .prompt {
+            position: absolute;
+            top: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            border: 2px solid #fff;
+            color: #fff;
+            text-shadow: 2px 2px #000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .prompt.left { left: 20px; }
+        .prompt.right { right: 20px; }
+        .prompt.visible { opacity: 1; }
+        #phone, #escape-menu, #start-screen {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0,0,0,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+        #phone-screen {
+            background-color: #1e1e1e;
+            width: 90%;
+            max-width: 380px;
+            height: 90%;
+            max-height: 700px;
+            border-radius: 20px;
+            border: 8px solid #555;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #phone-content { flex-grow: 1; padding: 15px; overflow-y: auto; }
+        #phone-nav { display: flex; justify-content: space-around; background-color: #333; padding: 10px 0; border-top: 4px solid #555; }
+        .phone-nav-btn { background: none; border: none; color: #f0f0f0; font-size: 0.8rem; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+        .phone-nav-btn.active { background-color: #f0f0f0; color: #1a1a1a; }
+        .message, .voicemail { background-color: #2a2a2a; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #a855f7; }
+        .music-header { color: #f0f0f0; font-size: 1.1rem; margin-top: 15px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 2px solid #4a4a4a; }
+        .music-track { display: flex; align-items: center; padding: 10px; background-color: #2a2a2a; border-radius: 8px; margin-bottom: 10px; cursor: pointer; }
+        .music-track img { width: 50px; height: 50px; border-radius: 4px; margin-right: 15px; }
+        #music-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            gap: 15px;
+        }
+        #music-bar img { width: 60px; height: 60px; border-radius: 4px; }
+        #music-controls button { background: none; border: none; color: #fff; font-size: 1.5rem; cursor: pointer; }
+        #progress-container { flex-grow: 1; background-color: #4a4a4a; height: 8px; border-radius: 4px; cursor: pointer; }
+        #progress-bar { width: 0%; height: 100%; background-color: #a855f7; border-radius: 4px; }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+
+    <div id="start-screen">
+        <h1 class="text-4xl mb-8">My Game</h1>
+        <button id="start-button" class="p-4 rounded-lg text-2xl">Click to Start</button>
+    </div>
+
+    <div id="game-container" class="relative w-full h-full border-8 border-black shadow-2xl rounded-lg hidden flex-col justify-between">
+        <div id="prompt-container" class="relative w-full h-12"></div>
+        <div id="animation-container" class="absolute inset-0 flex items-center justify-center pointer-events-none"></div>
+        <div id="music-bar" class="hidden">
+            <img id="current-album-art" src="https://placehold.co/60x60/1a1a1a/FFFFFF?text=Art">
+            <div class="flex-grow">
+                <p id="song-title" class="font-bold"></p>
+                <p id="song-artist" class="text-sm text-gray-400"></p>
+                <div id="progress-container" class="mt-1">
+                    <div id="progress-bar"></div>
+                </div>
+            </div>
+            <div id="music-controls" class="flex items-center gap-4">
+                <button id="prev-btn">⏮</button>
+                <button id="play-pause-btn">▶️</button>
+                <button id="next-btn">⏭</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="phone" style="display: none;">
+        <div id="phone-screen">
+            <div id="phone-header">My Phone</div>
+            <div id="phone-content"></div>
+            <div id="phone-nav">
+                <button class="phone-nav-btn" data-app="texts">Texts</button>
+                <button class="phone-nav-btn" data-app="voicemails">Voicemails</button>
+                <button class="phone-nav-btn active" data-app="music">Music</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="escape-menu" style="display: none;" class="flex-col gap-4">
+        <h2 class="text-4xl mb-4">Paused</h2>
+        <button id="resume-button" class="menu-button p-4 rounded-lg text-2xl w-64">Resume</button>
+        <button id="exit-button" class="menu-button p-4 rounded-lg text-2xl w-64">Exit to Desktop</button>
+    </div>
+    
+    <audio id="music-player"></audio>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const startButton = document.getElementById('start-button');
+        const gameContainer = document.getElementById('game-container');
+        const promptContainer = document.getElementById('prompt-container');
+        const animationContainer = document.getElementById('animation-container');
+        const phone = document.getElementById('phone');
+        const phoneContent = document.getElementById('phone-content');
+        const phoneNav = document.getElementById('phone-nav');
+        const musicPlayer = document.getElementById('music-player');
+        const musicBar = document.getElementById('music-bar');
+        const songTitleEl = document.getElementById('song-title');
+        const songArtistEl = document.getElementById('song-artist');
+        const currentAlbumArtEl = document.getElementById('current-album-art');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressContainer = document.getElementById('progress-container');
+        const progressBar = document.getElementById('progress-bar');
+        const escapeMenu = document.getElementById('escape-menu');
+        const resumeButton = document.getElementById('resume-button');
+        const exitButton = document.getElementById('exit-button');
+
+        // Game State
+        let currentState = {
+            currentRoom: 'park_bench',
+            phoneOpen: false,
+            isSmoking: false,
+            gamePaused: false,
+            currentTrackIndex: -1,
+        };
+        
+        const allMusicData = [
+            { type: 'header', title: 'The Blu Man & Don Papa 海賊 Era' },
+            { type: 'song', year: "8th April 2015", artist: "Blu Man", song: "Scum scum scum", image: "assets/scum_scum_scum.jpg", audio: "assets/scum_scum_scum.mp3" },
+            { type: 'song', year: "9th April 2015", artist: "Blu Man", song: "Le Soir Bleu", image: "assets/le_soir_bleu.jpg", audio: "assets/le_soir_bleu.mp3" },
+            { type: 'song', year: "27th April 2015", artist: "Don Papa 海賊", song: "タイトルなし、ありません日本語", image: "assets/タイトルなしありません日本語.jpg", audio: "assets/タイトルなしありません日本語.mp3" },
+            { type: 'song', year: "13th July 2015", artist: "Don Papa 海賊", song: "ｉ'ｖｅ  ｍｉｓｓ", image: "assets/ｉｖｅ_ｍｉｓｓ.jpg", audio: "assets/ｉｖｅ_ｍｉｓｓ.mp3" },
+            { type: 'song', year: "6th August 2015", artist: "Don Papa 海賊", song: "ｐｕｐｐｙ  ｌｏｖｅ", image: "assets/ｐｕｐｐｙ_ｌｏｖｅ.jpg", audio: "assets/ｐｕｐｐｙ_ｌｏｖｅ.mp3" },
+            { type: 'song', year: "23rd September 2015", artist: "Don Papa 海賊", song: "bａｍｂｏｏ", image: "assets/bａｍｂｏｏ.jpg", audio: "assets/bａｍｂｏｏ.mp3" },
+            { type: 'song', year: "12th October 2015", artist: "Don Papa 海賊", song: "青 ｋａｎｙｅ歌", image: "assets/青_ｋａｎｙｅ歌.jpg", audio: "assets/青_ｋａｎｙｅ歌.mp3" },
+            { type: 'song', year: "31st December 2015", artist: "ayo im sleep tho", song: "Clutch Kid - w  i  n  t  e  r", image: "assets/clutch_kid_winter_prod_don_papa_海賊.jpg", audio: "assets/clutch_kid_winter_prod_don_papa_海賊.mp3" },
+            { type: 'song', year: "4th January 2016", artist: "Don Papa 海賊", song: "tetsuo's nightmare", image: "assets/tetsuos_nightmare.jpg", audio: "assets/tetsuos_nightmare.mp3" },
+            { type: 'song', year: "13th January 2016", artist: "Don Papa 海賊", song: "Romance Dawn [tape]", image: "assets/romance_dawn_tape.jpg", audio: "assets/romance_dawn_tape.mp3" },
+            { type: 'song', year: "22nd February 2016", artist: "Don Papa 海賊", song: "Lotus Blossom [tape 2]", image: "assets/lotus_blossom_tape_2.jpg", audio: "assets/lotus_blossom_tape_2.mp3" },
+            { type: 'song', year: "25th April 2016", artist: "Don Papa 海賊", song: "Roanapur [Tape 3]", image: "assets/roanapur_tape_3.jpg", audio: "assets/roanapur_tape_3.mp3" },
+            { type: 'song', year: "16th May 2016", artist: "Don Papa 海賊", song: "ｍｏｎｓｏｏｎ", image: "assets/ｍｏｎｓｏｏｎ.jpg", audio: "assets/ｍｏｎｓｏｏｎ.mp3" },
+            { type: 'song', year: "22nd May 2016", artist: "Don Papa 海賊", song: "ｄｏｒｏｔｈｙ", image: "assets/ｄｏｒｏｔｈｙ.jpg", audio: "assets/ｄｏｒｏｔｈｙ.mp3" },
+            { type: 'song', year: "31st May 2016", artist: "Don Papa 海賊", song: "ｖｉｃｅ ｃｉｔｙ", image: "assets/ｖｉｃｅ_ｃｉｔｙ.jpg", audio: "assets/ｖｉｃｅ_ｃｉｔｙ.mp3" },
+            { type: 'song', year: "11th June 2016", artist: "front-left", song: "Wurlitzer Ready", image: "assets/wurlitzer_ready.jpg", audio: "assets/wurlitzer_ready.mp3" },
+            { type: 'song', year: "12th June 2016", artist: "Don Papa 海賊", song: "ｐｒｉｍｒｏｓｅ", image: "assets/ｐｒｉｍｒｏｓｅ.jpg", audio: "assets/ｐｒｉｍｒｏｓｅ.mp3" },
+            { type: 'header', title: 'The Lausse The Cat Era' },
+            { type: 'song', year: "24th June 2016", artist: "LAUSSE THE CAT", song: "go back to", image: "assets/go_back_to.jpg", audio: "assets/go_back_to.mp3" },
+            { type: 'song', year: "17th July 2016", artist: "LAUSSE THE CAT", song: "alone together", image: "assets/alone_together.jpg", audio: "assets/alone_together.mp3" },
+            { type: 'song', year: "9th September 2016", artist: "Don Papa 海賊", song: "ｍｅｒｉｃａｎ  ｂｗｏｉ", image: "assets/ｍｅｒｉｃａｎ_ｂｗｏｉ.jpg", audio: "assets/ｍｅｒｉｃａｎ_ｂｗｏｉ.mp3" },
+            { type: 'song', year: "10th October 2016", artist: "LAUSSE THE CAT", song: "wag1 pelican", image: "assets/wag1_pelican.jpg", audio: "assets/wag1_pelican.mp3" },
+            { type: 'song', year: "8th November 2016", artist: "LAUSSE THE CAT", song: "kitten blues", image: "assets/kitten_blues.jpg", audio: "assets/kitten_blues.mp3" },
+            { type: 'song', year: "26th November 2016", artist: "alejandringui", song: "Don Papa & Lausse The Cat - o o l o n g", image: "assets/don_papa_lausse_the_cat_o_o_l_o_n_g.jpg", audio: "assets/don_papa_lausse_the_cat_o_o_l_o_n_g.mp3" },
+            { type: 'song', year: "7th December 2016", artist: "front-left", song: "Ca Va Bien (ft. lausse the cat)", image: "assets/ca_va_bien_ft_lausse_the_cat.jpg", audio: "assets/ca_va_bien_ft_lausse_the_cat.mp3" },
+            { type: 'song', year: "7th December 2016", artist: "TAMBALA", song: "broke n' tokin (ft Don Papa 海賊)", image: "assets/broke_n_tokin_ft_don_papa_海賊.jpg", audio: "assets/broke_n_tokin_ft_don_papa_海賊.mp3" },
+            { type: 'song', year: "14th January 2017", artist: "LAUSSE THE CAT", song: "the cat who came for tea", image: "assets/the_cat_who_came_for_tea.jpg", audio: "assets/the_cat_who_came_for_tea.mp3" },
+            { type: 'song', year: "26th January 2017", artist: "LAUSSE THE CAT", song: "the cat and la lune", image: "assets/the_cat_and_la_lune.jpg", audio: "assets/the_cat_and_la_lune.mp3" },
+            { type: 'song', year: "26th January 2017", artist: "Blaiz & Vaga", song: "Blaiz x Don Papa 海賊 - Amor #HorsSerie", image: "assets/blaiz_x_don_papa_海賊_amor_horsserie.jpg", audio: "assets/blaiz_x_don_papa_海賊_amor_horsserie.mp3" },
+            { type: 'song', year: "12th February 2017", artist: "LAUSSE THE CAT", song: "zinfandel rosé", image: "assets/zinfandel_rosé.jpg", audio: "assets/zinfandel_rosé.mp3" },
+            { type: 'song', year: "13th February 2017", artist: "TAMBALA", song: "captain morgan's tale (ft. lausse the cat)", image: "assets/captain_morgans_tale_ft_lausse_the_cat.jpg", audio: "assets/captain_morgans_tale_ft_lausse_the_cat.mp3" },
+            { type: 'song', year: "8th March 2017", artist: "Ross Wilson", song: "BlossomHillGang (ft. Lausse The Cat)", image: "assets/blossomhillgang_ft_lausse_the_cat.jpg", audio: "assets/blossomhillgang_ft_lausse_the_cat.mp3" },
+            { type: 'song', year: "1st May 2017", artist: "Blaiz & Vaga", song: "Blaiz x Don Papa 海賊 - Lune #HorsSerie2", image: "assets/blaiz_x_don_papa_海賊_lune_horsserie2.jpg", audio: "assets/blaiz_x_don_papa_海賊_lune_horsserie2.mp3" },
+            { type: 'song', year: "29th September 2017", artist: "B-ahwe", song: "Blue print - B-ahwe (prod. Lausse the Cat)", image: "assets/blue_print_b-ahwe_prod_lausse_the_cat.jpg", audio: "assets/blue_print_b-ahwe_prod_lausse_the_cat.mp3" },
+            { type: 'song', year: "18th November 2017", artist: "illiterate.", song: "catching moths feat. lausse the cat", image: "assets/catching_moths_feat_lausse_the_cat.jpg", audio: "assets/catching_moths_feat_lausse_the_cat.mp3" },
+            { type: 'header', title: 'The Album + Mainstream' },
+            { type: 'song', year: "22nd March 2018", artist: "LAUSSE THE CAT", song: "TOY'S STORY", image: "assets/toys_story.jpg", audio: "assets/toys_story.mp3" },
+            { type: 'song', year: "1st May 2018", artist: "LAUSSE THE CAT", song: "BELLE BOUTEILLE", image: "assets/belle_bouteille.jpg", audio: "assets/belle_bouteille.mp3" },
+            { type: 'song', year: "20th June 2018", artist: "LAUSSE THE CAT", song: "The Girl, The Cat And The Tree", image: "assets/the_girl_the_cat_and_the_tree.jpg", audio: "assets/the_girl_the_cat_and_the_tree.mp3" },
+            { type: 'song', year: "6th July 2018", artist: "Nix Northwest", song: "Waves (Feat. LAUSSE THE CAT)", image: "assets/waves_feat_lausse_the_cat.jpg", audio: "assets/waves_feat_lausse_the_cat.mp3" },
+            { type: 'song', year: "13th July 2018", artist: "LAUSSE THE CAT", song: "Ciao Bella", image: "assets/ciao_bella.jpg", audio: "assets/ciao_bella.mp3" },
+            { type: 'song', year: "11th September 2018", artist: "LAUSSE THE CAT", song: "Redstripe Rhapsody", image: "assets/redstripe_rhapsody.jpg", audio: "assets/redstripe_rhapsody.mp3" },
+            { type: 'song', year: "28th September 2018", artist: "LAUSSE THE CAT", song: "Coco Channel ft. B-ahwe", image: "assets/coco_channel_ft_b-ahwe.jpg", audio: "assets/coco_channel_ft_b-ahwe.mp3" },
+            { type: 'song', year: "7th October 2018", artist: "apltn", song: "apltn x MakOto - If It Was Easy(feat. B-ahwe & LAUSSE THE CAT)", image: "assets/apltn_x_makoto_if_it_was_easy_feat_b-ahwe_lausse_the_cat.jpg", audio: "assets/apltn_x_makoto_if_it_was_easy_feat_b-ahwe_lausse_the_cat.mp3" },
+            { type: 'header', title: 'Recent Features & Singles' },
+            { type: 'song', year: "16th January 2020", artist: "calvin", song: "Lausse The Cat - Intro", image: "assets/lausse_the_cat_intro.jpg", audio: "assets/lausse_the_cat_intro.mp3" },
+            { type: 'song', year: "30th May 2020", artist: "Blaiz", song: "Calin (feat. LAUSSE THE CAT)", image: "assets/calin_feat_lausse_the_cat.jpg", audio: "assets/calin_feat_lausse_the_cat.mp3" },
+            { type: 'song', year: "30th June 2021", artist: "Nix Northwest", song: "When It Rains (feat. B-ahwe & LAUSSE THE CAT)", image: "assets/when_it_rains_feat_b-ahwe_lausse_the_cat.jpg", audio: "assets/when_it_rains_feat_b-ahwe_lausse_the_cat.mp3" },
+            { type: 'song', year: "23rd August 2021", artist: "Max limbrick", song: "Lausse The Cat - Park bench (rare)", image: "assets/lausse_the_cat_park_bench_rare.jpg", audio: "assets/lausse_the_cat_park_bench_rare.mp3" },
+            { type: 'song', year: "12th January 2022", artist: "Blaiz", song: "Môme", image: "assets/môme.jpg", audio: "assets/môme.mp3" }
+        ];
+
+        const gameData = {
+            'park_bench': {
+                backgroundImage: "url('assets/valentinepark1.gif')",
+                prompts: [
+                    { key: 'e', text: "'E' to Smoke", action: 'smoke', position: 'left' },
+                    { key: 'p', text: "'P' to Open/Close Phone", action: 'togglePhone', position: 'right' }
+                ]
+            }
+        };
+
+        const phoneData = {
+            texts: [{ from: "Mom", message: "Hey sweetie, just checking in. Don't forget dinner on Sunday! Love you!" }],
+            voicemails: [{ from: "Unknown", transcript: "We've been trying to reach you concerning your car's extended warranty..." }],
+            music: allMusicData
+        };
+        const songList = phoneData.music.filter(track => track.type === 'song');
+
+        // Game Functions
+        function startGame() {
+            startScreen.style.display = 'none';
+            gameContainer.classList.remove('hidden');
+            gameContainer.style.display = 'flex';
+            document.documentElement.requestFullscreen?.();
+            renderRoom(currentState.currentRoom);
+        }
+
+        function renderRoom(roomKey) {
+            const room = gameData[roomKey];
+            if (!room) return;
+            gameContainer.style.backgroundImage = room.backgroundImage;
+            updatePrompts(room.prompts);
+        }
+
+        function updatePrompts(prompts = []) {
+            promptContainer.innerHTML = '';
+            prompts.forEach(p => {
+                const el = document.createElement('div');
+                el.className = `prompt ${p.position}`;
+                el.textContent = p.text;
+                promptContainer.appendChild(el);
+                setTimeout(() => el.classList.add('visible'), 100);
+            });
+        }
+
+        function smoke() {
+            if (currentState.isSmoking) return;
+            currentState.isSmoking = true;
+            const animationImage = document.createElement('img');
+            animationContainer.appendChild(animationImage);
+            setTimeout(() => {
+                animationContainer.innerHTML = '';
+                currentState.isSmoking = false;
+            }, 2000); 
+        }
+
+        // Phone & Music Functions
+        function togglePhone() {
+            currentState.phoneOpen = !currentState.phoneOpen;
+            phone.style.display = currentState.phoneOpen ? 'flex' : 'none';
+            if (currentState.phoneOpen) {
+                renderPhoneApp('music');
+            }
+        }
+
+        function renderPhoneApp(appName) {
+            phoneContent.innerHTML = '';
+            document.querySelectorAll('.phone-nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.phone-nav-btn[data-app="${appName}"]`).classList.add('active');
+
+            if (appName === 'music') {
+                let songPlaybackIndex = 0;
+                phoneData.music.forEach(item => {
+                    if (item.type === 'header') {
+                        phoneContent.innerHTML += `<h2 class="music-header">${item.title}</h2>`;
+                    } else if (item.type === 'song') {
+                        const trackDiv = document.createElement('div');
+                        trackDiv.className = 'music-track';
+                        const year = item.year.split(' ').pop();
+                        trackDiv.innerHTML = `
+                            <img src="${item.image}" alt="${item.song}">
+                            <div>
+                                <p class="font-bold">${item.song}</p>
+                                <p class="text-sm text-gray-400">${item.artist} - ${year}</p>
+                            </div>`;
+                        
+                        const currentIndex = songPlaybackIndex;
+                        trackDiv.onclick = () => playSong(currentIndex);
+
+                        phoneContent.appendChild(trackDiv);
+                        songPlaybackIndex++;
+                    }
+                });
+            }
+        }
+
+        function playSong(index) {
+            console.log(`Attempting to play song index: ${index}`);
+            if (index < 0 || index >= songList.length) {
+                musicPlayer.pause();
+                musicBar.classList.add('hidden');
+                currentState.currentTrackIndex = -1;
+                return;
+            }
+            currentState.currentTrackIndex = index;
+            const track = songList[index];
+            musicPlayer.src = track.audio;
+            
+            const playPromise = musicPlayer.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    console.log(`Playback started for: ${track.song}`);
+                    updateMusicBar(track);
+                    musicBar.classList.remove('hidden');
+                    playPauseBtn.textContent = '⏸';
+                })
+                .catch(error => {
+                    console.error(`Playback failed for ${track.song}:`, error);
+                });
+            }
+        }
+        
+        function togglePlayPause() {
+            if (currentState.currentTrackIndex === -1) return;
+            if (musicPlayer.paused) {
+                musicPlayer.play();
+                playPauseBtn.textContent = '⏸';
+            } else {
+                musicPlayer.pause();
+                playPauseBtn.textContent = '▶️';
+            }
+        }
+
+        function updateMusicBar(track) {
+            songTitleEl.textContent = track.song;
+            songArtistEl.textContent = track.artist;
+            currentAlbumArtEl.src = track.image;
+        }
+        
+        function updateProgress() {
+            if (musicPlayer.duration) {
+                const progressPercent = (musicPlayer.currentTime / musicPlayer.duration) * 100;
+                progressBar.style.width = `${progressPercent}%`;
+            }
+        }
+        
+        function setProgress(e) {
+            const width = this.clientWidth;
+            const clickX = e.offsetX;
+            const duration = musicPlayer.duration;
+            if(duration) {
+                musicPlayer.currentTime = (clickX / width) * duration;
+            }
+        }
+
+        function togglePauseMenu() {
+            currentState.gamePaused = !currentState.gamePaused;
+            escapeMenu.style.display = currentState.gamePaused ? 'flex' : 'none';
+
+            if (currentState.gamePaused && currentState.currentTrackIndex !== -1 && !musicPlayer.paused) {
+                musicPlayer.pause();
+            } else if (!currentState.gamePaused && currentState.currentTrackIndex !== -1 && musicPlayer.paused) {
+                 musicPlayer.play();
+            }
+        }
+
+        // Event Listeners
+        startButton.addEventListener('click', startGame);
+        resumeButton.addEventListener('click', togglePauseMenu);
+        exitButton.addEventListener('click', () => {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            }
+            startScreen.style.display = 'flex';
+            gameContainer.style.display = 'none';
+            escapeMenu.style.display = 'none';
+            currentState.gamePaused = false;
+        });
+
+        playPauseBtn.addEventListener('click', togglePlayPause);
+        nextBtn.addEventListener('click', () => playSong(currentState.currentTrackIndex + 1));
+        prevBtn.addEventListener('click', () => playSong(currentState.currentTrackIndex - 1));
+        
+        musicPlayer.addEventListener('timeupdate', updateProgress);
+        musicPlayer.addEventListener('ended', () => playSong(currentState.currentTrackIndex + 1));
+        progressContainer.addEventListener('click', setProgress);
+
+        phoneNav.addEventListener('click', (e) => {
+            if (e.target.matches('.phone-nav-btn')) {
+                renderPhoneApp(e.target.dataset.app);
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            const key = e.key.toLowerCase();
+
+            if (key === 'escape') {
+                if (startScreen.style.display === 'none') {
+                    togglePauseMenu();
+                }
+                return;
+            }
+
+            if (key === 'p') {
+                if (!currentState.gamePaused && !currentState.isSmoking) {
+                    togglePhone();
+                }
+                return;
+            }
+
+            if (currentState.gamePaused || currentState.phoneOpen || currentState.isSmoking) {
+                return;
+            }
+
+            const room = gameData[currentState.currentRoom];
+            if (!room.prompts) return;
+
+            const prompt = room.prompts.find(p => p.key === key);
+            if (prompt && prompt.action === 'smoke') {
+                smoke();
+            }
+        });
+    });
+</script>
+<button id="testButton" style="position: absolute; top: 10px; left: 10px; z-index: 1000; padding: 20px; background: red; font-size: 20px;">CLICK ME TO TEST</button>
+<script>
+        const myTestButton = document.getElementById('testButton');
+        if (myTestButton) {
+            console.log('SUCCESS: The test button was found in the HTML.');
+            myTestButton.onclick = function() {
+                alert('IT WORKS! Your browser is running JavaScript clicks correctly.');
+                console.log('SUCCESS: The test button was clicked!');
+            };
+        } else {
+            console.error('FAILURE: The test button could not be found in the HTML.');
+        }
+    </script>
+</body>
+</html>
+</body>
+</html>
+
