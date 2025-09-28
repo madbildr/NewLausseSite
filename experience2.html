@@ -428,13 +428,7 @@
         startButton.addEventListener('click', startGame);
         resumeButton.addEventListener('click', togglePauseMenu);
         exitButton.addEventListener('click', () => {
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            }
-            startScreen.style.display = 'flex';
-            gameContainer.style.display = 'none';
-            escapeMenu.style.display = 'none';
-            currentState.gamePaused = false;
+            window.location.href = 'index.html';
         });
 
         playPauseBtn.addEventListener('click', togglePlayPause);
