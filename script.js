@@ -269,8 +269,8 @@ document.addEventListener('DOMContentLoaded', () => {
             year: "7th December 2016",
             artist: "front-left",
             song: "Ca Va Bien (ft. lausse the cat)",
-            image: "assets/ca_va_bien_ft_lausse_the_cat.jpg",
-            audio: "assets/ca_va_bien_ft_lausse_the_cat.mp3",
+            image: "assets/ca_va_bien_ft_lausse_the_cat_free_download.jpg",
+            audio: "assets/ca_va_bien_ft_lausse_the_cat_free_download.mp3",
             comment: "A comment about the track.",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/front-leftmusic/ca-va-bien-ft-lausse-the-cat"
