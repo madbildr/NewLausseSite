@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
             song: "Scum scum scum",
             image: "assets/scum_scum_scum.jpg",
             audio: "assets/scum_scum_scum.mp3",
-            comment: "A comment about the track.",
+            comment: "Lausses first ever beat, released on his alt SoundCloud account. A basic beat making use of a sample from taxi driver, scum scum scum.",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/bluman2/i-burnt-my-kitchen"
         },
