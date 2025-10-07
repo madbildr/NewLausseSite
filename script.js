@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
             song: "Le Soir Bleu",
             image: "assets/le_soir_bleu.jpg",
             audio: "assets/le_soir_bleu.mp3",
-            comment: "A comment about the track.",
+            comment: "This is the first song Lausse posted with some lyrics, and him rapping. Press the lyrics icon to listen. ",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/bluman2/le-soir-bleu"
         },
