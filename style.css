@@ -196,7 +196,6 @@ body.menu-open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translat
     font-weight: bold;
     line-height: 26px;
     cursor: pointer;
-    margin-left: 15px;
     transition: background-color 0.3s ease;
     flex-shrink: 0;
 }
@@ -213,12 +212,10 @@ body.menu-open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translat
     font-weight: bold;
     line-height: 26px;
     cursor: pointer;
-    margin-left: 15px;
     transition: background-color 0.3s ease;
     flex-shrink: 0;
 }
 .lyrics-button:hover { background-color: #555; }
-.timeline-item:nth-child(odd) .lyrics-button { order: -1; margin-left: 0; margin-right: 15px; }
 .album-art-circle.spinning { animation: spin 10s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -240,7 +237,8 @@ body.menu-open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translat
     background-color: rgba(0, 0, 0, 0.8);
     z-index: 1000;
 }
-.info-modal {
+.info-modal,
+.lyrics-modal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -253,7 +251,7 @@ body.menu-open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translat
     max-width: 500px;
     text-align: center;
 }
-.info-modal img { width: 200px; height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 1rem; }
+.info-modal img, .lyrics-modal img { width: 200px; height: 200px; object-fit: cover; border-radius: 5px; margin-bottom: 1rem; }
 .close-modal-btn { position: absolute; top: 10px; right: 15px; background: none; border: none; color: white; font-size: 2.5rem; cursor: pointer; }
 
 .bottom-player {
@@ -504,4 +502,59 @@ body.menu-open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translat
 #back-to-top-btn.visible {
     opacity: 1;
     pointer-events: auto;
+}
+/* NEW CSS RULES */
+
+/* This container will hold the buttons together */
+.button-group {
+    display: flex;  /* Align buttons horizontally */
+    gap: 8px;       /* Add a small space between the buttons */
+    margin-left: 15px; /* Add space between the track info and the button group */
+}
+
+/* This moves the entire button group for the items on the right side */
+.timeline-item:nth-child(odd) .button-group {
+    order: -1; /* This moves the group before the album art */
+    margin-left: 0;
+    margin-right: 15px;
+}
+/* Add these new rules to style.css */
+
+/* This makes the lyrics modal a positioned, hidden pop-up */
+.lyrics-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #2c2c2c;
+    padding: 2rem;
+    border-radius: 10px;
+    z-index: 1001;
+    width: 90%;
+    max-width: 600px; /* A bit wider for lyrics */
+    text-align: center;
+
+    /* These two lines keep it hidden initially */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+/* Add the .visible class to show it, just like the info-modal */
+.lyrics-modal.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* This makes the lyrics content scrollable if they are very long */
+#modal-lyrics-content {
+    margin-top: 1rem;
+    max-height: 50vh; /* Limit height to 50% of the viewport */
+    overflow-y: auto; /* Add a scrollbar if content overflows */
+    text-align: left;
+    white-space: pre-wrap; /* Respects line breaks in the text */
+    line-height: 1.6;
+    background-color: #1e1e1e;
+    padding: 15px;
+    border-radius: 5px;
 }

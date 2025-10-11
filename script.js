@@ -273,7 +273,22 @@ document.addEventListener('DOMContentLoaded', () => {
             audio: "assets/ca_va_bien_ft_lausse_the_cat_free_download.mp3",
             comment: "A comment about the track.",
             spotifyLink: "",
-            soundcloudLink: "https://soundcloud.com/front-leftmusic/ca-va-bien-ft-lausse-the-cat"
+            soundcloudLink: "https://soundcloud.com/front-leftmusic/ca-va-bien-ft-lausse-the-cat",
+            lyrics: [
+            "Lower. Lower. Lower. Lower. Lower. Lower. Lower.",
+            "Lower.",
+            "Lower.",
+            "Lower.",
+            "Lower.",
+            "Remember all the dreams that you had? You could do, you want, you could do so, you want him to do so much, you want him to do so much, you could do anything?",
+            "Roll up a zoot my friend, ain't got none left, she done answered, it's cool you can use my bins, I done ordered a new burr, I got more at the arches, make me some food I beg, I'm in the mood for some noodles and laughter, watch planet earth in the front room, some CGI we don't argue, we google the answers, laugh as I roll up a blim, after later my darling I beg, lungs are tight and my carlings are dead, night hit the park in a sec,",
+            "guess it's that time again, when the darkness arrives uninvited, dark minds are lighted, the brightest, light mares alive for my iris, stick like a bat on a site and say hi to my virus, I get some DMs, it's a bit late now, carpe diem, life's a peach, I just work at a beach bar and drink till PM,",
+            "ask if I'm good, I say salva a bien, get some DMs, it's a bit late now, carpe diem, life's a peach, I just work at a beach bar and drink till PM, ask if I'm good, I say salva a bien,",
+            "I ain't never been stressed out, I ain't never been stressed out, I ain't ever been stressed out, I ain't ever been stressed out bitch, I ain't never been stressed out, I ain't ever been stressed out, I ain't never been stressed out but I never go to Uni evil",
+            "You ever had a dream that you had you you could you do you you want you you could do",
+            "so you you do you could you you want you want him to do you so you do you you want you want",
+            "him to do you could do anything?"
+        ]
         },
         {
             type: 'song',
@@ -539,158 +554,218 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
 
     // ===================================================================
-    // STEP 2: BUILD THE TIMELINE HTML FROM THE DATA
-    // ===================================================================
-    const timelineContainer = document.getElementById('timeline-container');
-    let songCounter = 0; // Counter for songs only
+// STEP 2: BUILD THE TIMELINE HTML FROM THE DATA
+// ===================================================================
+const timelineContainer = document.getElementById('timeline-container');
+let songCounter = 0; // Counter for songs only
 
-    timelineData.forEach((item, index) => {
-        if (item.type === 'header') {
-            const eraHeader = document.createElement('div');
-            eraHeader.classList.add('era-header');
-            eraHeader.innerHTML = `<h2>${item.title}</h2>`;
-            timelineContainer.appendChild(eraHeader);
-        } else if (item.type === 'song') {
-            const timelineItem = document.createElement('div');
-            timelineItem.classList.add('timeline-item');
-            
-            if (songCounter % 2 === 0) {
-                timelineItem.classList.add('left-item');
-            } else {
-                timelineItem.classList.add('right-item');
-            }
+timelineData.forEach((item, index) => {
+    if (item.type === 'header') {
+        const eraHeader = document.createElement('div');
+        eraHeader.classList.add('era-header');
+        eraHeader.innerHTML = `<h2>${item.title}</h2>`;
+        timelineContainer.appendChild(eraHeader);
+    } else if (item.type === 'song') {
+        const timelineItem = document.createElement('div');
+        timelineItem.classList.add('timeline-item');
+        
+        if (songCounter % 2 === 0) {
+            timelineItem.classList.add('left-item');
+        } else {
+            timelineItem.classList.add('right-item');
+        }
 
-            timelineItem.setAttribute('data-index', index); 
-            timelineItem.innerHTML = `
-                <div class="timeline-date">${item.year}</div>
-                <div class="timeline-point"></div>
-                <div class="timeline-content">
-                    <div class="track-display">
-                        <div class="album-art-circle">
-                            <img data-src="${item.image}" class="lazy-image" alt="Album art for ${item.song} by ${item.artist}">
-                            <div class="play-icon">►</div>
-                            <div class="pause-icon">❚❚</div>
-                        </div>
-                        <div class="track-info">
-                            <div class="track-title">${item.song}</div>
-                            <div class="track-artist">${item.artist}</div>
-                        </div>
+        timelineItem.setAttribute('data-index', index); 
+        timelineItem.innerHTML = `
+            <div class="timeline-date">${item.year}</div>
+            <div class="timeline-point"></div>
+            <div class="timeline-content">
+                <div class="track-display">
+                    <div class="album-art-circle">
+                        <img data-src="${item.image}" class="lazy-image" alt="Album art for ${item.song} by ${item.artist}">
+                        <div class="play-icon">►</div>
+                        <div class="pause-icon">❚❚</div>
                     </div>
+                    <div class="track-info">
+                        <div class="track-title">${item.song}</div>
+                        <div class="track-artist">${item.artist}</div>
+                    </div>
+                </div>
+                <div class="button-group">
                     <button class="info-button">+</button>
                     <button class="lyrics-button">♪</button>
                 </div>
-            `;
-            timelineContainer.appendChild(timelineItem);
-            songCounter++;
-        }
-    });
-
-    // ===================================================================
-    // STEP 3: SET UP ALL INTERACTIVE FEATURES
-    // ===================================================================
-    const menuButton = document.getElementById('menu-button');
-    menuButton.addEventListener('click', () => {
-        document.body.classList.toggle('menu-open');
-    });
-
-    const overlay = document.getElementById('modal-overlay');
-    const infoModal = document.getElementById('info-modal');
-    const closeModalBtn = document.getElementById('close-modal-btn');
-    const bottomPlayer = document.getElementById('bottom-player');
-    const playerAudio = document.getElementById('player-audio');
-    const playerLinks = document.getElementById('player-links');
-    let currentlyPlayingIndex = null;
-
-    function handleTrackClick(index) {
-        const isSameTrack = (currentlyPlayingIndex === index);
-        if (isSameTrack) {
-            if (playerAudio.paused) { playerAudio.play(); } else { playerAudio.pause(); }
-        } else {
-            currentlyPlayingIndex = index;
-            const itemData = timelineData[index];
-            playerAudio.src = itemData.audio;
-            document.getElementById('player-album-art').style.backgroundImage = `url(${itemData.image})`;
-            document.getElementById('player-song-title').textContent = itemData.song;
-            document.getElementById('player-artist-name').textContent = itemData.artist;
-            playerLinks.innerHTML = '';
-            if (itemData.spotifyLink) {
-                playerLinks.innerHTML += `<a href="${itemData.spotifyLink}" target="_blank" class="social-link spotify"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.193 14.122c-.22.359-.684.48-1.043.26l-3.35-2.043c-.359-.22-.48-.684-.26-1.043.22-.359.684-.48 1.043-.26l3.35 2.043c.359.22.48.684.26 1.043zm.85-2.306c-.274.444-.84.59-1.283.315l-3.84-2.35c-.444-.274-.59-.84-.315-1.283.274-.444.84-.59 1.283-.315l3.84 2.35c.444.274.59.84.315 1.283zm.13-2.923c-.332.534-1.01.713-1.544.38l-4.43-2.704c-.534-.332-.713-1.01-.38-1.544s1.01-.713 1.544-.38l4.43 2.704c.534.332.713 1.01.38 1.544z"></path></svg><span>Spotify</span></a>`;
-            }
-            if (itemData.soundcloudLink) {
-                playerLinks.innerHTML += `<a href="${itemData.soundcloudLink}" target="_blank" class="social-link soundcloud"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.53,8.71A7.27,7.27,0,0,0,15.1,6.56V15.3a2,2,0,0,1-2,2,2,2,0,0,1-2-2,2,2,0,0,1,2-2,1,1,0,0,0,1-1V9.56a4.4,4.4,0,0,0-4.4-4.4,4.36,4.36,0,0,0-4.07,2.83,1,1,0,0,0,1,1.17,1,1,0,0,0,1-.8,2.4,2.4,0,0,1,2.1-1.2,2.35,2.35,0,0,1,2.4,2.4V15.3a4,4,0,0,0,4,4,4,4,0,0,0,4-4,1,1,0,0,0-1-1,1,1,0,0,0-1,1,2,2,0,0,1-2,2,2,2,0,0,1-2-2V8.92a1,1,0,0,0-1-1V6.56A5.27,5.27,0,0,1,21.5,8a1,1,0,0,0,1.05.14A1,1,0,0,0,21.53,8.71Z"></path></svg><span>SoundCloud</span></a>`;
-            }
-            bottomPlayer.classList.add('visible');
-            playerAudio.play();
-        }
+            </div>
+        `;
+        timelineContainer.appendChild(timelineItem);
+        songCounter++;
     }
-    function showInfoModal(index) {
+});
+
+// ===================================================================
+// STEP 3: SET UP ALL INTERACTIVE FEATURES
+// ===================================================================
+const menuButton = document.getElementById('menu-button');
+menuButton.addEventListener('click', () => {
+    document.body.classList.toggle('menu-open');
+});
+
+// --- Get all necessary elements from the DOM ---
+const overlay = document.getElementById('modal-overlay');
+const bottomPlayer = document.getElementById('bottom-player');
+const playerAudio = document.getElementById('player-audio');
+const playerLinks = document.getElementById('player-links');
+let currentlyPlayingIndex = null;
+
+// Info Modal Elements
+const infoModal = document.getElementById('info-modal');
+const closeModalBtn = document.getElementById('close-modal-btn');
+const modalAlbumArt = document.getElementById('modal-album-art');
+const modalSongTitle = document.getElementById('modal-song-title');
+const modalArtistName = document.getElementById('modal-artist-name');
+const modalComment = document.getElementById('modal-comment');
+
+// Lyrics Modal Elements (make sure your HTML IDs match these)
+const lyricsModal = document.getElementById('lyrics-modal');
+const closeLyricsModalBtn = document.getElementById('close-lyrics-modal-btn');
+const lyricsModalAlbumArt = document.getElementById('lyrics-modal-album-art');
+const lyricsModalSongTitle = document.getElementById('lyrics-modal-song-title');
+const lyricsModalArtistName = document.getElementById('lyrics-modal-artist-name');
+const modalLyricsContent = document.getElementById('modal-lyrics-content');
+
+
+// --- Function to handle playing a track ---
+function handleTrackClick(index) {
+    const isSameTrack = (currentlyPlayingIndex === index);
+    if (isSameTrack) {
+        if (playerAudio.paused) { playerAudio.play(); } else { playerAudio.pause(); }
+    } else {
+        currentlyPlayingIndex = index;
         const itemData = timelineData[index];
-        const modalArt = document.getElementById('modal-album-art');
-        modalArt.src = itemData.image;
-        document.getElementById('modal-song-title').textContent = itemData.song;
-        document.getElementById('modal-artist-name').textContent = `${itemData.artist} (${itemData.year})`;
-        document.getElementById('modal-comment').textContent = itemData.comment;
-        overlay.classList.add('visible');
-        infoModal.classList.add('visible');
+        playerAudio.src = itemData.audio;
+        document.getElementById('player-album-art').style.backgroundImage = `url(${itemData.image})`;
+        document.getElementById('player-song-title').textContent = itemData.song;
+        document.getElementById('player-artist-name').textContent = itemData.artist;
+        playerLinks.innerHTML = '';
+        if (itemData.spotifyLink) {
+            playerLinks.innerHTML += `<a href="${itemData.spotifyLink}" target="_blank" class="social-link spotify"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.193 14.122c-.22.359-.684.48-1.043.26l-3.35-2.043c-.359-.22-.48-.684-.26-1.043.22-.359.684-.48 1.043-.26l3.35 2.043c.359.22.48.684.26 1.043zm.85-2.306c-.274.444-.84.59-1.283.315l-3.84-2.35c-.444-.274-.59-.84-.315-1.283.274-.444.84-.59 1.283-.315l3.84 2.35c.444.274.59.84.315 1.283zm.13-2.923c-.332.534-1.01.713-1.544.38l-4.43-2.704c-.534-.332-.713-1.01-.38-1.544s1.01-.713 1.544-.38l4.43 2.704c.534.332.713 1.01.38 1.544z"></path></svg><span>Spotify</span></a>`;
+        }
+        if (itemData.soundcloudLink) {
+            playerLinks.innerHTML += `<a href="${itemData.soundcloudLink}" target="_blank" class="social-link soundcloud"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.53,8.71A7.27,7.27,0,0,0,15.1,6.56V15.3a2,2,0,0,1-2,2,2,2,0,0,1-2-2,2,2,0,0,1,2-2,1,1,0,0,0,1-1V9.56a4.4,4.4,0,0,0-4.4-4.4,4.36,4.36,0,0,0-4.07,2.83,1,1,0,0,0,1,1.17,1,1,0,0,0,1-.8,2.4,2.4,0,0,1,2.1-1.2,2.35,2.35,0,0,1,2.4,2.4V15.3a4,4,0,0,0,4,4,4,4,0,0,0,4-4,1,1,0,0,0-1-1,1,1,0,0,0-1,1,2,2,0,0,1-2,2,2,2,0,0,1-2-2V8.92a1,1,0,0,0-1-1V6.56A5.27,5.27,0,0,1,21.5,8a1,1,0,0,0,1.05.14A1,1,0,0,0,21.53,8.71Z"></path></svg><span>SoundCloud</span></a>`;
+        }
+        bottomPlayer.classList.add('visible');
+        playerAudio.play();
     }
-    function closeInfoModal() {
-        overlay.classList.remove('visible');
-        infoModal.classList.remove('visible');
+}
+
+// --- Functions to show the modals ---
+function showInfoModal(index) {
+    const itemData = timelineData[index];
+    modalAlbumArt.src = itemData.image;
+    modalSongTitle.textContent = itemData.song;
+    modalArtistName.textContent = `${itemData.artist} (${itemData.year})`;
+    modalComment.textContent = itemData.comment;
+    overlay.classList.add('visible');
+    infoModal.classList.add('visible');
+}
+
+function showLyricsModal(index) {
+    const itemData = timelineData[index];
+    lyricsModalAlbumArt.src = itemData.image;
+    lyricsModalSongTitle.textContent = itemData.song;
+    lyricsModalArtistName.textContent = itemData.artist;
+    
+    // Check if lyrics exist and populate the content area
+    if (itemData.lyrics && itemData.lyrics.length > 0) {
+        modalLyricsContent.textContent = itemData.lyrics.join('\n');
+    } else {
+        modalLyricsContent.textContent = "No lyrics available for this track.";
     }
-    timelineContainer.addEventListener('click', (event) => {
-        const target = event.target;
-        const timelineItem = target.closest('.timeline-item');
-        if (timelineItem) {
-            const index = timelineItem.dataset.index;
-            if (target.closest('.info-button')) {
-                showInfoModal(index);
-            } else if (target.closest('.album-art-circle')) {
-                handleTrackClick(index);
-            }
+    
+    overlay.classList.add('visible');
+    lyricsModal.classList.add('visible');
+}
+
+// --- A single, reliable function to close ANY open modal ---
+function closeAllModals() {
+    overlay.classList.remove('visible');
+    infoModal.classList.remove('visible');
+    lyricsModal.classList.remove('visible');
+}
+
+// --- Main click listener for the entire timeline ---
+timelineContainer.addEventListener('click', (event) => {
+    const target = event.target;
+    const timelineItem = target.closest('.timeline-item');
+    
+    if (timelineItem) {
+        const index = timelineItem.dataset.index;
+        
+        if (target.closest('.info-button')) {
+            showInfoModal(index);
+        } else if (target.closest('.lyrics-button')) {
+            showLyricsModal(index);
+        } else if (target.closest('.album-art-circle')) {
+            handleTrackClick(index);
+        }
+    }
+});
+
+// --- Event listeners for closing modals ---
+closeModalBtn.addEventListener('click', closeAllModals);
+closeLyricsModalBtn.addEventListener('click', closeAllModals);
+overlay.addEventListener('click', closeAllModals);
+
+
+// --- Event listeners for the audio player ---
+playerAudio.addEventListener('play', () => {
+    document.querySelectorAll('.album-art-circle').forEach(c => c.classList.remove('is-playing', 'spinning'));
+    const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
+    if (currentCircle) { currentCircle.classList.add('is-playing', 'spinning'); }
+});
+
+playerAudio.addEventListener('pause', () => {
+    const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
+    if (currentCircle) { currentCircle.classList.remove('is-playing', 'spinning'); }
+});
+
+
+// --- Intersection Observer for lazy loading images ---
+const lazyImages = document.querySelectorAll('.lazy-image');
+const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            img.src = img.dataset.src;
+            img.classList.remove('lazy-image');
+            observer.unobserve(img);
         }
     });
-    closeModalBtn.addEventListener('click', closeInfoModal);
-    overlay.addEventListener('click', closeInfoModal);
-    playerAudio.addEventListener('play', () => {
-        document.querySelectorAll('.album-art-circle').forEach(c => c.classList.remove('is-playing', 'spinning'));
-        const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
-        if (currentCircle) { currentCircle.classList.add('is-playing', 'spinning'); }
-    });
-    playerAudio.addEventListener('pause', () => {
-        const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
-        if (currentCircle) { currentCircle.classList.remove('is-playing', 'spinning'); }
-    });
-    const lazyImages = document.querySelectorAll('.lazy-image');
-    const imageObserver = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy-image');
-                observer.unobserve(img);
-            }
-        });
-    });
-    lazyImages.forEach(img => { imageObserver.observe(img); });
+});
+lazyImages.forEach(img => { imageObserver.observe(img); });
 
-    const backToTopButton = document.getElementById('back-to-top-btn');
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 300) {
-            backToTopButton.classList.add('visible');
-        } else {
-            backToTopButton.classList.remove('visible');
-        }
-    });
-    backToTopButton.addEventListener('click', () => {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-    const volumeBtn = document.getElementById('volume-btn');
 
-        if (volumeBtn) {
-            volumeBtn.addEventListener('click', () => {
-            playerAudio.muted = !playerAudio.muted;
-            volumeBtn.textContent = playerAudio.muted ? "🔇" : "🔊";
-        });
-        }      
+// --- Back to Top Button Logic ---
+const backToTopButton = document.getElementById('back-to-top-btn');
+window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+        backToTopButton.classList.add('visible');
+    } else {
+        backToTopButton.classList.remove('visible');
+    }
+});
+backToTopButton.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+
+// --- Volume Button Logic ---
+const volumeBtn = document.getElementById('volume-btn');
+if (volumeBtn) {
+    volumeBtn.addEventListener('click', () => {
+        playerAudio.muted = !playerAudio.muted;
+        volumeBtn.textContent = playerAudio.muted ? "🔇" : "🔊";
+    });
+}
 
 });
