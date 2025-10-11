@@ -451,7 +451,7 @@ document.addEventListener('DOMContentLoaded', () => {
             song: "Redstripe Rhapsody",
             image: "assets/redstripe_rhapsody.jpg",
             audio: "assets/redstripe_rhapsody.mp3",
-            comment: "A comment about the track.",
+            comment: "This is his most well known track, with around 28 million streams on Spotify. The song makes use of samples from 911 by Tyler the Creator, and a guitar cover of Passionfruit by Drake. He's largely speaking about his experiences living in Uni and describes very surrealy the experience of going to a party in Hyde Park.",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/lausse-the-cat/redstripe-rhapsody"
         },
@@ -577,6 +577,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
                     <button class="info-button">+</button>
+                    <button class="lyrics-button">♪</button>
                 </div>
             `;
             timelineContainer.appendChild(timelineItem);

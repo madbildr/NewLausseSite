@@ -201,7 +201,24 @@ body.menu-open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translat
     flex-shrink: 0;
 }
 .info-button:hover { background-color: #555; }
-.timeline-item:nth-child(odd) .info-button { order: -1; margin-left: 0; margin-right: 15px; }
+
+.lyrics-button {
+    background: #333;
+    color: #f0f0f0;
+    border: 1px solid #555;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: bold;
+    line-height: 26px;
+    cursor: pointer;
+    margin-left: 15px;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+.lyrics-button:hover { background-color: #555; }
+.timeline-item:nth-child(odd) .lyrics-button { order: -1; margin-left: 0; margin-right: 15px; }
 .album-art-circle.spinning { animation: spin 10s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
