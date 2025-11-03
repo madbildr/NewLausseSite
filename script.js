@@ -652,6 +652,9 @@ const playerAudio = document.getElementById('player-audio');
 const playerLinks = document.getElementById('player-links');
 let currentlyPlayingIndex = null;
 
+// 🌟 NEW WELCOME POPUP ELEMENTS 🌟
+const welcomePopup = document.getElementById('welcome-popup');
+const closeWelcomePopupBtn = document.getElementById('close-welcome-popup-btn');
 // Info Modal Elements
 const infoModal = document.getElementById('info-modal');
 const closeModalBtn = document.getElementById('close-modal-btn');
@@ -726,8 +729,15 @@ function closeAllModals() {
     overlay.classList.remove('visible');
     infoModal.classList.remove('visible');
     lyricsModal.classList.remove('visible');
+    welcomePopup.classList.remove('visible');
 }
-
+// --- Function to show the welcome popup on load ---
+function showWelcomePopup() {
+        // Only show it if the user hasn't seen it (optional: use localStorage for persistence)
+        // For now, it shows on every page load.
+    overlay.classList.add('visible');
+    welcomePopup.classList.add('visible');
+}
 // --- Main click listener for the entire timeline ---
 timelineContainer.addEventListener('click', (event) => {
     const target = event.target;
@@ -749,6 +759,9 @@ timelineContainer.addEventListener('click', (event) => {
 // --- Event listeners for closing modals ---
 closeModalBtn.addEventListener('click', closeAllModals);
 closeLyricsModalBtn.addEventListener('click', closeAllModals);
+overlay.addEventListener('click', closeAllModals);
+// 🌟 Close welcome popup 🌟
+closeWelcomePopupBtn.addEventListener('click', closeAllModals);
 overlay.addEventListener('click', closeAllModals);
 
 
@@ -779,7 +792,8 @@ const imageObserver = new IntersectionObserver((entries, observer) => {
 });
 lazyImages.forEach(img => { imageObserver.observe(img); });
 
-
+// 🌟 Show the welcome popup when the DOM is fully loaded 🌟
+showWelcomePopup();
 // --- Back to Top Button Logic ---
 const backToTopButton = document.getElementById('back-to-top-btn');
 window.addEventListener('scroll', () => {
