@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
             song: "ｉ'ｖｅ  ｍｉｓｓ",
             image: "assets/ｉｖｅ_ｍｉｓｓ.jpg",
             audio: "assets/ｉｖｅ_ｍｉｓｓ.mp3",
-            comment: "A comment about the track.",
+            comment: "Personally, this is one of my favourite beats by Lausse. The sample is beautiful, chopping, slowing and pitching down the song Bless the telephone by Labi Siffre. It perfectly conveys that mood of missing someone you love, whether they are still yours or not, I suspect Lausse may have been missing a Lucy at this moment in time.",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/don-pappa/ive-missed-you-bitch"
         },
