@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
             song: "Scum scum scum",
             image: "assets/scum_scum_scum.jpg",
             audio: "assets/scum_scum_scum.mp3",
-            comment: "Lausses first ever beat, released on his alt SoundCloud account. A basic beat making use of a sample from taxi driver, scum scum scum.",
+            comment: "This is Lausses' first known piece of content on soundcloud. It's a simple beat making use of a quote from Taxi Driver(1976) giving it it's title scum scum scum. It was released under Lausses first alias Blu Man. Take a moment to listen and enjoy, it's only a short piece.",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/bluman2/i-burnt-my-kitchen"
         },
@@ -27,7 +27,25 @@ document.addEventListener('DOMContentLoaded', () => {
             audio: "assets/le_soir_bleu.mp3",
             comment: "This is the first song Lausse posted with some lyrics, and him rapping. Press the lyrics icon to listen. ",
             spotifyLink: "",
-            soundcloudLink: "https://soundcloud.com/bluman2/le-soir-bleu"
+            soundcloudLink: "https://soundcloud.com/bluman2/le-soir-bleu",
+            lyrics: [           
+            "And Its been too sick",
+            "too many times when I think that shit",
+            "why did the time have to fly so quick",
+            "why did your eyes have to lose that glint",
+            "why did your lies choose me to collide with",
+            "you were the person I chose to rely on",
+            "you were the reason my life had purpose",
+            "'nt seem like a person to burden and cursed it",
+            "and I feel so fucked",
+            "looks like my body fucked off in the darkness",
+            "words of everybody walked up with the calmness",
+            "calm as a cat and I feel like a dick",
+            "guess why I'm fucked, I'm an ideal fit",
+            "making me sick, making me trip",
+            "down I fall with a dear and a grin",
+            "down I fall in the darkest of pits"
+        ]
         },
         {
             type: 'song',
