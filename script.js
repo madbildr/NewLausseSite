@@ -60,6 +60,17 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             type: 'song',
+            year: "15th June 2015",
+            artist: "Don Papa 海賊",
+            song: "ｓｌｅｅｐｙ ｌａｇｏｏｎ",
+            image: "assets/sleepylagoon.jpg",
+            audio: "assets/sleepylagoon.mp3",
+            comment: "A comment about the track.",
+            spotifyLink: "",
+            soundcloudLink: "https://soundcloud.com/don-pappa/s-l-e-e-p-y-l-a-g-o-o-n-1"
+        },
+        {
+            type: 'song',
             year: "13th July 2015",
             artist: "Don Papa 海賊",
             song: "ｉ'ｖｅ  ｍｉｓｓ",
