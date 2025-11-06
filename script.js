@@ -93,6 +93,17 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             type: 'song',
+            year: "6th August 2015",
+            artist: "Don Papa 海賊",
+            song: "ｃｈｉｌｌ ｏｕｔ ｂｒｕｈ",
+            image: "assets/chilloutbruh.jpg",
+            audio: "assets/chilloutbruh.mp3",
+            comment: "A comment about the track.",
+            spotifyLink: "",
+            soundcloudLink: "https://soundcloud.com/don-pappa/c-h-i-l-l-o-u-t-b-r-u-h"
+        },
+        {
+            type: 'song',
             year: "23rd September 2015",
             artist: "Don Papa 海賊",
             song: "bａｍｂｏｏ",
@@ -567,7 +578,7 @@ document.addEventListener('DOMContentLoaded', () => {
             song: "Lausse The Cat - Intro",
             image: "assets/lausse_the_cat_intro.jpg",
             audio: "assets/lausse_the_cat_intro.mp3",
-            comment: "A comment about the track.",
+            comment: "Similar to the previous tracks the exact date this track was released isn't know, so I've put the date it was uploaded to soundcloud.",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/calvinvantsis/lausse-the-cat-intro"
         },
@@ -600,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
             song: "Lausse The Cat - Park bench (rare)",
             image: "assets/lausse_the_cat_park_bench_rare.jpg",
             audio: "assets/lausse_the_cat_park_bench_rare.mp3",
-            comment: "A comment about the track.",
+            comment: "One of the few found tracks we have, uploaded to soundcloud in 2021 but it was likely made earlier, it was found on a beat tape.",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/max-limbrick/untitled"
         },
