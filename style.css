@@ -737,3 +737,205 @@ body.menu-open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translat
     .faq-item.active .faq-answer { padding: 12px; }
 }
 /* ... (Remaining CSS rules) ... */
+/* ================================== */
+/* NEW ALBUM PAGE: THE MOCKING STARS  */
+/* ================================== */
+/* Accent Colors:
+ * BRIGHT RED: #E74C3C
+ * YELLOWED PAPER: #F7E7CE
+ */
+
+.album-page-main {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 100px 20px 50px;
+}
+
+.album-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid #333;
+}
+
+.album-art-large {
+    width: 250px;
+    height: 250px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    margin-bottom: 1.5rem;
+}
+
+.album-header h1 {
+    font-size: 3.5rem;
+    color: #E74C3C; /* Changed from orange to BRIGHT RED */
+    margin-bottom: 0.5rem;
+}
+
+.album-meta span {
+    display: inline-block;
+    background-color: #1e1e1e;
+    padding: 5px 10px;
+    border-radius: 4px;
+    margin: 5px;
+    color: #F7E7CE; /* Changed from #ccc to YELLOWED PAPER for subtle contrast */
+    font-size: 0.9rem;
+}
+
+/* Quick Navigation */
+.quick-nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 3rem;
+    padding: 15px;
+    background-color: #242424;
+    border-radius: 8px;
+}
+
+.quick-nav a {
+    text-decoration: none;
+    color: #F7E7CE; /* YELLOWED PAPER for default link text */
+    font-weight: bold;
+    padding: 8px 15px;
+    border: 1px solid #E74C3C; /* Changed from orange border to BRIGHT RED */
+    border-radius: 20px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.quick-nav a:hover {
+    background-color: #E74C3C; /* Changed from orange to BRIGHT RED background */
+    color: #121212; /* Dark text on red background */
+}
+
+/* Main Section Styles */
+.album-section {
+    margin-bottom: 4rem;
+    padding: 30px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.album-section h2 {
+    font-size: 2.2rem;
+    color: #E74C3C; /* Changed from orange to BRIGHT RED */
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #333;
+    margin-bottom: 1.5rem;
+}
+
+.mini-header {
+    font-size: 1.4rem;
+    color: #F7E7CE; /* Changed from #f0f0f0 to YELLOWED PAPER */
+    margin-top: 1.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.theory-content p {
+    line-height: 1.6;
+    color: #ccc;
+}
+
+.reddit-quote {
+    border-left: 5px solid #E74C3C; /* Changed from orange accent line to BRIGHT RED */
+    padding-left: 20px;
+    margin: 20px 0;
+    font-style: italic;
+    color: #aaa;
+}
+
+.reddit-quote footer {
+    margin-top: 10px;
+    font-size: 0.9rem;
+    font-style: normal;
+    color: #E74C3C; /* Changed from orange to BRIGHT RED */
+}
+
+/* --- Lyrics Accordion Styles --- */
+.lyrics-intro {
+    color: #F7E7CE; /* Changed from #ccc to YELLOWED PAPER */
+    font-style: italic;
+    margin-bottom: 25px;
+}
+
+.song-lyric-item {
+    margin-bottom: 10px;
+    border: 1px solid #333;
+    border-radius: 5px;
+    background-color: #2c2c2c;
+    overflow: hidden;
+}
+
+.song-title-toggle {
+    padding: 15px;
+    margin: 0;
+    cursor: pointer;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #F7E7CE; /* Changed from #f0f0f0 to YELLOWED PAPER */
+    background-color: #333;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.2s;
+}
+
+.song-title-toggle:hover {
+    background-color: #444;
+}
+
+.song-lyrics pre {
+    color: #F7E7CE; /* Changed from #ccc to YELLOWED PAPER */
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Mobile Adjustments (no color changes needed here) */
+@media (max-width: 768px) {
+    .album-header h1 { font-size: 2.5rem; }
+    .album-art-large { width: 180px; height: 180px; }
+    .album-section h2 { font-size: 1.8rem; }
+    .quick-nav { flex-direction: column; }
+    .quick-nav a { width: 100%; text-align: center; }
+}
+/* --- Lyrics Accordion Styles (Crucial for function!) --- */
+
+/* 1. This rule sets the default, closed state. */
+.song-lyrics {
+    max-height: 0; /* Keeps the content collapsed */
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+}
+
+/* 2. This rule defines the open state. */
+.song-lyric-item.open .song-lyrics {
+    max-height: 500vh; /* Expands the container height (needs to be large) */
+    padding: 15px;
+    border-top: 1px solid #444;
+}
+
+/* 3. This is the visual arrow flip (optional, but good for UX). */
+.song-title-toggle::after {
+    content: '▼';
+    font-size: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.song-lyric-item.open .song-title-toggle::after {
+    transform: rotate(180deg);
+}
+/* Styling for song titles within the theory block */
+.theory-song-title {
+    font-size: 1.2rem;
+    color: #F7E7CE; /* Yellowed paper color */
+    margin-top: 20px;
+    margin-bottom: 5px;
+}
