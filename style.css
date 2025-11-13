@@ -917,7 +917,7 @@ body.menu-open .hamburger-line:nth-child(3) { transform: rotate(-45deg) translat
 
 /* 2. This rule defines the open state. */
 .song-lyric-item.open .song-lyrics {
-    max-height: 500vh; /* Expands the container height (needs to be large) */
+    max-height: 900vh; /* Expands the container height (needs to be large) */
     padding: 15px;
     border-top: 1px solid #444;
 }
