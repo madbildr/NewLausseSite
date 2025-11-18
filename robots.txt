@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://laussehub.co.uk/sitemap.xml
+Sitemap: https://www.laussehub.co.uk/sitemap.xml
