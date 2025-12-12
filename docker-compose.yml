@@ -2,7 +2,6 @@ version: '3'
 services:
   website:
     build: .              # <--- Changed from 'image: nginx'
-    container_name: lausseshub_trial
     restart: always
     networks:
       - default
