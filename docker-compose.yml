@@ -1,13 +1,13 @@
 version: '3'
-
 services:
   website:
-    image: nginx:alpine
+    build: .              # <--- Changed from 'image: nginx'
+    container_name: lausseshub_trial
     restart: always
     networks:
       - default
-
 networks:
   default:
     external: true
-    name: clav  # Connects to your Nginx Proxy Manager
+    name: clav
+
