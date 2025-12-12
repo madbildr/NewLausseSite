@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  website:
+    image: nginx:alpine
+    restart: always
+    volumes:
+      # Maps your code into the web server
+      - .:/usr/share/nginx/html
+    networks:
+      - default
+
+networks:
+  default:
+    external: true
+    name: clav  # Connects to your Nginx Proxy Manager
