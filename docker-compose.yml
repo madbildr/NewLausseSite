@@ -4,9 +4,6 @@ services:
   website:
     image: nginx:alpine
     restart: always
-    volumes:
-      # Maps your code into the web server
-      - .:/usr/share/nginx/html
     networks:
       - default
 
