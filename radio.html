@@ -66,13 +66,11 @@
         </div>
 
         <div class="radio-chat-container">
-            <h3>The Green Room</h3>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Live Chat</p>
-            
-            <div style="height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #0a0a0a; border-radius: 8px; border: 1px dashed #333; color: #555;">
-                <p style="margin: 0; font-size: 1.2rem;">💬</p>
-                <p>Community Chat Loading...</p>
-            </div>
+            <iframe 
+                src="https://chat.53clav.duckdns.org" 
+                style="border:0; width:100%; height:450px;"
+                title="Lausse Hub Chat">
+            </iframe>
         </div>
 
         <audio id="radio-stream" preload="none">
@@ -90,7 +88,7 @@
                 document.body.classList.toggle('menu-open');
             });
 
-            // 2. Audio Player Logic
+            // 2. Elements
             const audio = document.getElementById('radio-stream');
             const playBtn = document.getElementById('radio-play-btn');
             const titleEl = document.getElementById('radio-song-title');
@@ -99,7 +97,6 @@
             const listenerEl = document.getElementById('listener-count');
             const volSlider = document.getElementById('radio-volume');
             
-            // Progress Elements
             const progressFill = document.getElementById('progress-fill');
             const timeElapsedEl = document.getElementById('time-elapsed');
             const timeTotalEl = document.getElementById('time-total');
@@ -108,15 +105,15 @@
             let currentDuration = 0;
             let currentElapsed = 0;
 
+            // Play Button Logic
             playBtn.addEventListener('click', () => {
                 if (isPlaying) {
                     audio.pause();
                     playBtn.textContent = "▶";
                     playBtn.classList.remove('playing');
                 } else {
-                    // Reload to ensure live sync
                     const currentSrc = audio.querySelector('source').src;
-                    audio.src = currentSrc; 
+                    audio.src = currentSrc; // Reload to jump to live
                     audio.play();
                     playBtn.textContent = "❚❚";
                     playBtn.classList.add('playing');
@@ -124,16 +121,18 @@
                 isPlaying = !isPlaying;
             });
 
+            // Volume Logic
             volSlider.addEventListener('input', (e) => {
                 audio.volume = e.target.value;
             });
 
-            // 3. API Logic
+            // 3. API Logic (Metadata + Progress)
             function updateMetadata() {
+                // Fetch from AzuraCast API
                 fetch('https://radio.laussehub.co.uk/api/nowplaying/1')
                 .then(res => res.json())
                 .then(data => {
-                    // Update Text Info
+                    // Update Info
                     if(data.now_playing && data.now_playing.song) {
                         titleEl.textContent = data.now_playing.song.title;
                         artistEl.textContent = data.now_playing.song.artist;
@@ -141,7 +140,7 @@
                             artEl.src = data.now_playing.song.art;
                         }
                     }
-                    // Update Listener Count
+                    // Update Listeners
                     if(data.listeners && data.listeners.total !== undefined) {
                         listenerEl.textContent = `👥 ${data.listeners.total} Locked In`;
                     }
@@ -179,11 +178,11 @@
                 }
             }
 
-            // Polling
-            setInterval(updateMetadata, 10000); // Sync every 10s
-            updateMetadata(); // Run now
+            // Sync Interval
+            setInterval(updateMetadata, 10000); 
+            updateMetadata(); 
 
-            // Local Timer (Smoothness)
+            // Local Progress Timer (Smoothness)
             setInterval(() => {
                 if (currentDuration > 0 && currentElapsed < currentDuration) {
                     currentElapsed++;
