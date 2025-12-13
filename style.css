@@ -1131,3 +1131,59 @@ input[type=range] { width: 80%; accent-color: #E74C3C; }
         margin-top: 50px;
     }
 }
+/* ======================== */
+/* RADIO PAGE UPDATES       */
+/* ======================== */
+
+/* Progress Bar Styles */
+.progress-wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+.progress-bar-bg {
+    flex-grow: 1;
+    height: 4px;
+    background-color: #333;
+    border-radius: 2px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    width: 0%; /* JS will update this */
+    background-color: #E74C3C; /* Red */
+    border-radius: 2px;
+    transition: width 0.2s linear; /* Smooth fill */
+}
+
+.time-text {
+    font-size: 0.7rem;
+    color: #888;
+    min-width: 35px;
+    font-family: monospace;
+    text-align: center;
+}
+
+/* Chat Container Styles */
+.radio-chat-container {
+    background: #111;
+    padding: 0; /* Remove padding so iframe fits perfectly */
+    border-radius: 15px;
+    border: 1px solid #222;
+    text-align: center;
+    overflow: hidden; /* Clip the iframe corners */
+    min-height: 450px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    margin-top: 20px;
+}
+
+/* Hide the "Green Room" header if The Lounge has its own header */
+.radio-chat-container h3 {
+    display: none; 
+}
