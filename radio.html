@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lausse FM - Live Radio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="radio-page-body">
+
+    <button class="menu-button" id="menu-button">
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+    </button>
+
+    <nav class="menu-overlay" id="menu-overlay">
+        <ul>
+            <li><a href="index.html">TIMELINE</a></li>
+            <li><a href="radio.html" style="color: #E74C3C;">RADIO ● LIVE</a></li>
+            <li><a href="the-mocking-stars.html">Mocking Stars</a></li>
+            <li><a href="about.html">About & FAQ</a></li>
+            <li><a href="https://www.reddit.com/r/Laussethecat/" target="_blank">Reddit</a></li>
+        </ul>
+    </nav>
+
+    <main class="radio-container">
+        
+        <div class="radio-interface">
+            <div class="radio-header">
+                <div class="status-row">
+                    <div class="on-air-badge">● LIVE</div>
+                    <div id="listener-count" class="listener-badge">Loading...</div>
+                </div>
+                <h1>LAUSSE FM</h1>
+                <p style="color: #666; font-size: 0.9rem; margin-top: 5px;">24/7 Lo-Fi & Underground</p>
+            </div>
+
+            <div class="radio-visual">
+                <img src="https://assets.laussehub.co.uk/assets/lausse-welcome.png" alt="Radio Art" id="radio-art">
+            </div>
+
+            <div class="now-playing-info">
+                <h2 id="radio-song-title">Connecting...</h2>
+                <h3 id="radio-artist-name">Lausse Hub Radio</h3>
+            </div>
+
+            <div class="radio-controls">
+                <button id="radio-play-btn" class="big-play-btn">▶</button>
+                <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                    <span style="font-size: 0.8rem;">🔈</span>
+                    <input type="range" id="radio-volume" min="0" max="1" step="0.1" value="1">
+                    <span style="font-size: 0.8rem;">🔊</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="radio-chat-container">
+            <h3>The Green Room</h3>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Pick a name. Say hello. Keep it wavy.</p>
+            
+            <iframe src="https://www5.cbox.ws/box/?boxid=960219&boxtag=MOIDsf" width="100%" height="450" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe>    
+        </div>
+
+        <audio id="radio-stream" preload="none">
+            <source src="https://radio.laussehub.co.uk/listen/lausse/radio.mp3" type="audio/mpeg">
+        </audio>
+
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Menu Logic
+            const menuButton = document.getElementById('menu-button');
+            menuButton.addEventListener('click', () => {
+                document.body.classList.toggle('menu-open');
+            });
+
+            // 2. Audio Player Logic
+            const audio = document.getElementById('radio-stream');
+            const playBtn = document.getElementById('radio-play-btn');
+            const titleEl = document.getElementById('radio-song-title');
+            const artistEl = document.getElementById('radio-artist-name');
+            const artEl = document.getElementById('radio-art');
+            const listenerEl = document.getElementById('listener-count');
+            const volSlider = document.getElementById('radio-volume');
+
+            let isPlaying = false;
+
+            playBtn.addEventListener('click', () => {
+                if (isPlaying) {
+                    audio.pause();
+                    playBtn.textContent = "▶";
+                    playBtn.classList.remove('playing');
+                } else {
+                    // Reload the source to ensure we jump to "Live" rather than where we paused
+                    const currentSrc = audio.querySelector('source').src;
+                    audio.src = currentSrc; 
+                    audio.play();
+                    playBtn.textContent = "❚❚";
+                    playBtn.classList.add('playing');
+                }
+                isPlaying = !isPlaying;
+            });
+
+            volSlider.addEventListener('input', (e) => {
+                audio.volume = e.target.value;
+            });
+
+            // 3. API Fetch (Metadata & Listeners)
+            function updateMetadata() {
+                fetch('https://radio.laussehub.co.uk/api/nowplaying/1')
+                .then(res => res.json())
+                .then(data => {
+                    // Update Song Info
+                    if(data.now_playing && data.now_playing.song) {
+                        titleEl.textContent = data.now_playing.song.title;
+                        artistEl.textContent = data.now_playing.song.artist;
+                        if(data.now_playing.song.art) {
+                            artEl.src = data.now_playing.song.art;
+                        }
+                    }
+                    // Update Listener Count
+                    if(data.listeners && data.listeners.total !== undefined) {
+                        listenerEl.textContent = `👥 ${data.listeners.total} Locked In`;
+                    }
+                })
+                .catch(err => {
+                    console.log("Radio API Error:", err);
+                    titleEl.textContent = "Lausse FM";
+                    artistEl.textContent = "Live Stream";
+                });
+            }
+
+            // Update metadata every 10 seconds
+            setInterval(updateMetadata, 10000);
+            updateMetadata(); // Run immediately on load
+        });
+    </script>
+</body>
+</html>
