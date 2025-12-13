@@ -32,7 +32,7 @@
             <div class="radio-header">
                 <div class="status-row">
                     <div class="on-air-badge">● LIVE</div>
-                    <div id="listener-count" class="listener-badge">Loading...</div>
+                    <div id="listener-count" class="listener-badge">Connecting...</div>
                 </div>
                 <h1>LAUSSE FM</h1>
                 <p style="color: #666; font-size: 0.9rem; margin-top: 5px;">24/7 Lo-Fi & Underground</p>
@@ -47,6 +47,14 @@
                 <h3 id="radio-artist-name">Lausse Hub Radio</h3>
             </div>
 
+            <div class="progress-wrapper">
+                <div class="time-text" id="time-elapsed">0:00</div>
+                <div class="progress-bar-bg">
+                    <div id="progress-fill" class="progress-bar-fill"></div>
+                </div>
+                <div class="time-text" id="time-total">0:00</div>
+            </div>
+
             <div class="radio-controls">
                 <button id="radio-play-btn" class="big-play-btn">▶</button>
                 <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
@@ -59,9 +67,12 @@
 
         <div class="radio-chat-container">
             <h3>The Green Room</h3>
-            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Pick a name. Say hello. Keep it wavy.</p>
+            <p style="font-size: 0.8rem; color: #666; margin-bottom: 15px;">Live Chat</p>
             
-            <iframe src="https://www5.cbox.ws/box/?boxid=960219&boxtag=MOIDsf" width="100%" height="450" allowtransparency="yes" allow="autoplay" frameborder="0" marginheight="0" marginwidth="0" scrolling="auto"></iframe>    
+            <div style="height: 400px; display: flex; flex-direction: column; justify-content: center; align-items: center; background: #0a0a0a; border-radius: 8px; border: 1px dashed #333; color: #555;">
+                <p style="margin: 0; font-size: 1.2rem;">💬</p>
+                <p>Community Chat Loading...</p>
+            </div>
         </div>
 
         <audio id="radio-stream" preload="none">
@@ -87,8 +98,15 @@
             const artEl = document.getElementById('radio-art');
             const listenerEl = document.getElementById('listener-count');
             const volSlider = document.getElementById('radio-volume');
+            
+            // Progress Elements
+            const progressFill = document.getElementById('progress-fill');
+            const timeElapsedEl = document.getElementById('time-elapsed');
+            const timeTotalEl = document.getElementById('time-total');
 
             let isPlaying = false;
+            let currentDuration = 0;
+            let currentElapsed = 0;
 
             playBtn.addEventListener('click', () => {
                 if (isPlaying) {
@@ -96,7 +114,7 @@
                     playBtn.textContent = "▶";
                     playBtn.classList.remove('playing');
                 } else {
-                    // Reload the source to ensure we jump to "Live" rather than where we paused
+                    // Reload to ensure live sync
                     const currentSrc = audio.querySelector('source').src;
                     audio.src = currentSrc; 
                     audio.play();
@@ -110,12 +128,12 @@
                 audio.volume = e.target.value;
             });
 
-            // 3. API Fetch (Metadata & Listeners)
+            // 3. API Logic
             function updateMetadata() {
                 fetch('https://radio.laussehub.co.uk/api/nowplaying/1')
                 .then(res => res.json())
                 .then(data => {
-                    // Update Song Info
+                    // Update Text Info
                     if(data.now_playing && data.now_playing.song) {
                         titleEl.textContent = data.now_playing.song.title;
                         artistEl.textContent = data.now_playing.song.artist;
@@ -127,6 +145,13 @@
                     if(data.listeners && data.listeners.total !== undefined) {
                         listenerEl.textContent = `👥 ${data.listeners.total} Locked In`;
                     }
+
+                    // Update Progress Data
+                    if(data.now_playing) {
+                        currentElapsed = data.now_playing.elapsed;
+                        currentDuration = data.now_playing.duration;
+                        updateProgressBar();
+                    }
                 })
                 .catch(err => {
                     console.log("Radio API Error:", err);
@@ -135,9 +160,36 @@
                 });
             }
 
-            // Update metadata every 10 seconds
-            setInterval(updateMetadata, 10000);
-            updateMetadata(); // Run immediately on load
+            function updateProgressBar() {
+                const formatTime = (seconds) => {
+                    if (isNaN(seconds) || seconds === 0) return "0:00";
+                    const mins = Math.floor(seconds / 60);
+                    const secs = Math.floor(seconds % 60);
+                    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+                };
+
+                timeElapsedEl.textContent = formatTime(currentElapsed);
+                timeTotalEl.textContent = formatTime(currentDuration);
+
+                if (currentDuration > 0) {
+                    const percent = (currentElapsed / currentDuration) * 100;
+                    progressFill.style.width = `${percent}%`;
+                } else {
+                    progressFill.style.width = '0%';
+                }
+            }
+
+            // Polling
+            setInterval(updateMetadata, 10000); // Sync every 10s
+            updateMetadata(); // Run now
+
+            // Local Timer (Smoothness)
+            setInterval(() => {
+                if (currentDuration > 0 && currentElapsed < currentDuration) {
+                    currentElapsed++;
+                    updateProgressBar();
+                }
+            }, 1000);
         });
     </script>
 </body>
