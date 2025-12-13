@@ -679,233 +679,302 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     ];
 
+// ===================================================================
+    // STEP 2: BUILD THE TIMELINE (WITH SEARCH & FILTER)
     // ===================================================================
-// STEP 2: BUILD THE TIMELINE HTML FROM THE DATA
-// ===================================================================
-const timelineContainer = document.getElementById('timeline-container');
-let songCounter = 0; // Counter for songs only
+    
+    const timelineContainer = document.getElementById('timeline-container');
+    const searchInput = document.getElementById('timeline-search'); 
 
-timelineData.forEach((item, index) => {
-    if (item.type === 'header') {
-        const eraHeader = document.createElement('div');
-        eraHeader.classList.add('era-header');
-        eraHeader.innerHTML = `<h2>${item.title}</h2>`;
-        timelineContainer.appendChild(eraHeader);
-    } else if (item.type === 'song') {
-        const timelineItem = document.createElement('div');
-        timelineItem.classList.add('timeline-item');
+    // 1. Define the Image Observer ONCE here at the top scope
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy-image');
+                observer.unobserve(img);
+            }
+        });
+    });
+
+    // 2. Main Function to Render the Timeline
+    function renderTimeline(dataToRender) {
+        // Clear container
+        timelineContainer.innerHTML = '';
         
-        if (songCounter % 2 === 0) {
-            timelineItem.classList.add('left-item');
+        let songCounter = 0; 
+
+        // Handle "No Results"
+        if (dataToRender.length === 0) {
+            timelineContainer.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #888;">
+                    <h3>No tracks found matching that search.</h3>
+                    <p>Try searching for a different song or artist.</p>
+                </div>`;
+            return;
+        }
+
+        // Loop through data and build HTML
+        dataToRender.forEach((item) => {
+            // Find index in ORIGINAL data to ensure player works correctly
+            const originalIndex = timelineData.indexOf(item);
+
+            if (item.type === 'header') {
+                const eraHeader = document.createElement('div');
+                eraHeader.classList.add('era-header');
+                eraHeader.innerHTML = `<h2>${item.title}</h2>`;
+                timelineContainer.appendChild(eraHeader);
+            } 
+            else if (item.type === 'song') {
+                const timelineItem = document.createElement('div');
+                timelineItem.classList.add('timeline-item');
+                
+                // Alternate left/right
+                if (songCounter % 2 === 0) {
+                    timelineItem.classList.add('left-item');
+                } else {
+                    timelineItem.classList.add('right-item');
+                }
+
+                // Use originalIndex here
+                timelineItem.setAttribute('data-index', originalIndex); 
+                
+                timelineItem.innerHTML = `
+                    <div class="timeline-date">${item.year}</div>
+                    <div class="timeline-point"></div>
+                    <div class="timeline-content">
+                        <div class="track-display">
+                            <div class="album-art-circle">
+                                <img data-src="${item.image}" class="lazy-image" alt="Album art for ${item.song} by ${item.artist}">
+                                <div class="play-icon">►</div>
+                                <div class="pause-icon">❚❚</div>
+                            </div>
+                            <div class="track-info">
+                                <div class="track-title">${item.song}</div>
+                                <div class="track-artist">${item.artist}</div>
+                            </div>
+                        </div>
+                        <div class="button-group">
+                            <button class="info-button">+</button>
+                            <button class="lyrics-button">♪</button>
+                        </div>
+                    </div>
+                `;
+                timelineContainer.appendChild(timelineItem);
+                songCounter++;
+            }
+        });
+
+        // Re-attach the Image Observer to the newly created elements
+        const newLazyImages = document.querySelectorAll('.lazy-image');
+        newLazyImages.forEach(img => imageObserver.observe(img));
+    }
+
+    // 3. Search Listener
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase().trim();
+
+            if (searchTerm === '') {
+                renderTimeline(timelineData);
+            } else {
+                const filteredData = timelineData.filter(item => {
+                    if (item.type === 'header') return false; 
+                    return (
+                        item.song.toLowerCase().includes(searchTerm) ||
+                        item.artist.toLowerCase().includes(searchTerm) ||
+                        (item.year && item.year.toLowerCase().includes(searchTerm))
+                    );
+                });
+                renderTimeline(filteredData);
+            }
+        });
+    }
+
+    // 4. Initial Render
+    renderTimeline(timelineData);
+
+
+    // ===================================================================
+    // STEP 3: SET UP ALL INTERACTIVE FEATURES
+    // ===================================================================
+    
+    // --- Menu Toggle ---
+    const menuButton = document.getElementById('menu-button');
+    if(menuButton) {
+        menuButton.addEventListener('click', () => {
+            document.body.classList.toggle('menu-open');
+        });
+    }
+
+    // --- Select Elements ---
+    const overlay = document.getElementById('modal-overlay');
+    const bottomPlayer = document.getElementById('bottom-player');
+    const playerAudio = document.getElementById('player-audio');
+    const playerLinks = document.getElementById('player-links');
+    let currentlyPlayingIndex = null;
+
+    // --- Welcome Popup Elements ---
+    const welcomePopup = document.getElementById('welcome-popup');
+    const closeWelcomePopupBtn = document.getElementById('close-welcome-popup-btn');
+    
+    // --- Info Modal Elements ---
+    const infoModal = document.getElementById('info-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const modalAlbumArt = document.getElementById('modal-album-art');
+    const modalSongTitle = document.getElementById('modal-song-title');
+    const modalArtistName = document.getElementById('modal-artist-name');
+    const modalComment = document.getElementById('modal-comment');
+
+    // --- Lyrics Modal Elements ---
+    const lyricsModal = document.getElementById('lyrics-modal');
+    const closeLyricsModalBtn = document.getElementById('close-lyrics-modal-btn');
+    const lyricsModalAlbumArt = document.getElementById('lyrics-modal-album-art');
+    const lyricsModalSongTitle = document.getElementById('lyrics-modal-song-title');
+    const lyricsModalArtistName = document.getElementById('lyrics-modal-artist-name');
+    const modalLyricsContent = document.getElementById('modal-lyrics-content');
+
+
+    // --- Track Click Handler ---
+    function handleTrackClick(index) {
+        const isSameTrack = (currentlyPlayingIndex === index);
+        if (isSameTrack) {
+            if (playerAudio.paused) { playerAudio.play(); } else { playerAudio.pause(); }
         } else {
-            timelineItem.classList.add('right-item');
+            currentlyPlayingIndex = index;
+            const itemData = timelineData[index];
+            playerAudio.src = itemData.audio;
+            document.getElementById('player-album-art').style.backgroundImage = `url(${itemData.image})`;
+            document.getElementById('player-song-title').textContent = itemData.song;
+            document.getElementById('player-artist-name').textContent = itemData.artist;
+            playerLinks.innerHTML = '';
+            
+            if (itemData.spotifyLink) {
+                playerLinks.innerHTML += `<a href="${itemData.spotifyLink}" target="_blank" class="social-link spotify"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.193 14.122c-.22.359-.684.48-1.043.26l-3.35-2.043c-.359-.22-.48-.684-.26-1.043.22-.359.684-.48 1.043-.26l3.35 2.043c.359.22.48.684.26 1.043zm.85-2.306c-.274.444-.84.59-1.283.315l-3.84-2.35c-.444-.274-.59-.84-.315-1.283.274-.444.84-.59 1.283-.315l3.84 2.35c.444.274.59.84.315 1.283zm.13-2.923c-.332.534-1.01.713-1.544.38l-4.43-2.704c-.534-.332-.713-1.01-.38-1.544s1.01-.713 1.544-.38l4.43 2.704c.534.332.713 1.01.38 1.544z"></path></svg><span>Spotify</span></a>`;
+            }
+            if (itemData.soundcloudLink) {
+                playerLinks.innerHTML += `<a href="${itemData.soundcloudLink}" target="_blank" class="social-link soundcloud"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.53,8.71A7.27,7.27,0,0,0,15.1,6.56V15.3a2,2,0,0,1-2,2,2,2,0,0,1-2-2,2,2,0,0,1-2-2,1,1,0,0,0,1-1V9.56a4.4,4.4,0,0,0-4.4-4.4,4.36,4.36,0,0,0-4.07,2.83,1,1,0,0,0,1,1.17,1,1,0,0,0,1-.8,2.4,2.4,0,0,1,2.1-1.2,2.35,2.35,0,0,1,2.4,2.4V15.3a4,4,0,0,0,4,4,4,4,0,0,0,4-4,1,1,0,0,0-1-1,1,1,0,0,0-1,1,2,2,0,0,1-2,2,2,2,0,0,1-2-2V8.92a1,1,0,0,0-1-1V6.56A5.27,5.27,0,0,1,21.5,8a1,1,0,0,0,1.05.14A1,1,0,0,0,21.53,8.71Z"></path></svg><span>SoundCloud</span></a>`;
+            }
+            bottomPlayer.classList.add('visible');
+            playerAudio.play();
         }
-
-        timelineItem.setAttribute('data-index', index); 
-        timelineItem.innerHTML = `
-            <div class="timeline-date">${item.year}</div>
-            <div class="timeline-point"></div>
-            <div class="timeline-content">
-                <div class="track-display">
-                    <div class="album-art-circle">
-                        <img data-src="${item.image}" class="lazy-image" alt="Album art for ${item.song} by ${item.artist}">
-                        <div class="play-icon">►</div>
-                        <div class="pause-icon">❚❚</div>
-                    </div>
-                    <div class="track-info">
-                        <div class="track-title">${item.song}</div>
-                        <div class="track-artist">${item.artist}</div>
-                    </div>
-                </div>
-                <div class="button-group">
-                    <button class="info-button">+</button>
-                    <button class="lyrics-button">♪</button>
-                </div>
-            </div>
-        `;
-        timelineContainer.appendChild(timelineItem);
-        songCounter++;
     }
-});
 
-// ===================================================================
-// STEP 3: SET UP ALL INTERACTIVE FEATURES
-// ===================================================================
-const menuButton = document.getElementById('menu-button');
-menuButton.addEventListener('click', () => {
-    document.body.classList.toggle('menu-open');
-});
-
-// --- Get all necessary elements from the DOM ---
-const overlay = document.getElementById('modal-overlay');
-const bottomPlayer = document.getElementById('bottom-player');
-const playerAudio = document.getElementById('player-audio');
-const playerLinks = document.getElementById('player-links');
-let currentlyPlayingIndex = null;
-
-// 🌟 NEW WELCOME POPUP ELEMENTS 🌟
-const welcomePopup = document.getElementById('welcome-popup');
-const closeWelcomePopupBtn = document.getElementById('close-welcome-popup-btn');
-// Info Modal Elements
-const infoModal = document.getElementById('info-modal');
-const closeModalBtn = document.getElementById('close-modal-btn');
-const modalAlbumArt = document.getElementById('modal-album-art');
-const modalSongTitle = document.getElementById('modal-song-title');
-const modalArtistName = document.getElementById('modal-artist-name');
-const modalComment = document.getElementById('modal-comment');
-
-// Lyrics Modal Elements (make sure your HTML IDs match these)
-const lyricsModal = document.getElementById('lyrics-modal');
-const closeLyricsModalBtn = document.getElementById('close-lyrics-modal-btn');
-const lyricsModalAlbumArt = document.getElementById('lyrics-modal-album-art');
-const lyricsModalSongTitle = document.getElementById('lyrics-modal-song-title');
-const lyricsModalArtistName = document.getElementById('lyrics-modal-artist-name');
-const modalLyricsContent = document.getElementById('modal-lyrics-content');
-
-
-// --- Function to handle playing a track ---
-function handleTrackClick(index) {
-    const isSameTrack = (currentlyPlayingIndex === index);
-    if (isSameTrack) {
-        if (playerAudio.paused) { playerAudio.play(); } else { playerAudio.pause(); }
-    } else {
-        currentlyPlayingIndex = index;
+    // --- Modal Functions ---
+    function showInfoModal(index) {
         const itemData = timelineData[index];
-        playerAudio.src = itemData.audio;
-        document.getElementById('player-album-art').style.backgroundImage = `url(${itemData.image})`;
-        document.getElementById('player-song-title').textContent = itemData.song;
-        document.getElementById('player-artist-name').textContent = itemData.artist;
-        playerLinks.innerHTML = '';
-        if (itemData.spotifyLink) {
-            playerLinks.innerHTML += `<a href="${itemData.spotifyLink}" target="_blank" class="social-link spotify"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.193 14.122c-.22.359-.684.48-1.043.26l-3.35-2.043c-.359-.22-.48-.684-.26-1.043.22-.359.684-.48 1.043-.26l3.35 2.043c.359.22.48.684.26 1.043zm.85-2.306c-.274.444-.84.59-1.283.315l-3.84-2.35c-.444-.274-.59-.84-.315-1.283.274-.444.84-.59 1.283-.315l3.84 2.35c.444.274.59.84.315 1.283zm.13-2.923c-.332.534-1.01.713-1.544.38l-4.43-2.704c-.534-.332-.713-1.01-.38-1.544s1.01-.713 1.544-.38l4.43 2.704c.534.332.713 1.01.38 1.544z"></path></svg><span>Spotify</span></a>`;
-        }
-        if (itemData.soundcloudLink) {
-            playerLinks.innerHTML += `<a href="${itemData.soundcloudLink}" target="_blank" class="social-link soundcloud"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.53,8.71A7.27,7.27,0,0,0,15.1,6.56V15.3a2,2,0,0,1-2,2,2,2,0,0,1-2-2,2,2,0,0,1,2-2,1,1,0,0,0,1-1V9.56a4.4,4.4,0,0,0-4.4-4.4,4.36,4.36,0,0,0-4.07,2.83,1,1,0,0,0,1,1.17,1,1,0,0,0,1-.8,2.4,2.4,0,0,1,2.1-1.2,2.35,2.35,0,0,1,2.4,2.4V15.3a4,4,0,0,0,4,4,4,4,0,0,0,4-4,1,1,0,0,0-1-1,1,1,0,0,0-1,1,2,2,0,0,1-2,2,2,2,0,0,1-2-2V8.92a1,1,0,0,0-1-1V6.56A5.27,5.27,0,0,1,21.5,8a1,1,0,0,0,1.05.14A1,1,0,0,0,21.53,8.71Z"></path></svg><span>SoundCloud</span></a>`;
-        }
-        bottomPlayer.classList.add('visible');
-        playerAudio.play();
+        modalAlbumArt.src = itemData.image;
+        modalSongTitle.textContent = itemData.song;
+        modalArtistName.textContent = `${itemData.artist} (${itemData.year})`;
+        modalComment.textContent = itemData.comment;
+        overlay.classList.add('visible');
+        infoModal.classList.add('visible');
     }
-}
 
-// --- Functions to show the modals ---
-function showInfoModal(index) {
-    const itemData = timelineData[index];
-    modalAlbumArt.src = itemData.image;
-    modalSongTitle.textContent = itemData.song;
-    modalArtistName.textContent = `${itemData.artist} (${itemData.year})`;
-    modalComment.textContent = itemData.comment;
-    overlay.classList.add('visible');
-    infoModal.classList.add('visible');
-}
-
-function showLyricsModal(index) {
-    const itemData = timelineData[index];
-    lyricsModalAlbumArt.src = itemData.image;
-    lyricsModalSongTitle.textContent = itemData.song;
-    lyricsModalArtistName.textContent = itemData.artist;
-    
-    // Check if lyrics exist and populate the content area
-    if (itemData.lyrics && itemData.lyrics.length > 0) {
-        modalLyricsContent.textContent = itemData.lyrics.join('\n');
-    } else {
-        modalLyricsContent.textContent = "No lyrics available for this track.";
-    }
-    
-    overlay.classList.add('visible');
-    lyricsModal.classList.add('visible');
-}
-
-// --- A single, reliable function to close ANY open modal ---
-function closeAllModals() {
-    overlay.classList.remove('visible');
-    infoModal.classList.remove('visible');
-    lyricsModal.classList.remove('visible');
-    welcomePopup.classList.remove('visible');
-}
-// --- Function to show the welcome popup on load ---
-function showWelcomePopup() {
-        // Only show it if the user hasn't seen it (optional: use localStorage for persistence)
-        // For now, it shows on every page load.
-    overlay.classList.add('visible');
-    welcomePopup.classList.add('visible');
-}
-// --- Main click listener for the entire timeline ---
-timelineContainer.addEventListener('click', (event) => {
-    const target = event.target;
-    const timelineItem = target.closest('.timeline-item');
-    
-    if (timelineItem) {
-        const index = timelineItem.dataset.index;
+    function showLyricsModal(index) {
+        const itemData = timelineData[index];
+        lyricsModalAlbumArt.src = itemData.image;
+        lyricsModalSongTitle.textContent = itemData.song;
+        lyricsModalArtistName.textContent = itemData.artist;
         
-        if (target.closest('.info-button')) {
-            showInfoModal(index);
-        } else if (target.closest('.lyrics-button')) {
-            showLyricsModal(index);
-        } else if (target.closest('.album-art-circle')) {
-            handleTrackClick(index);
+        if (itemData.lyrics && itemData.lyrics.length > 0) {
+            modalLyricsContent.textContent = itemData.lyrics.join('\n');
+        } else {
+            modalLyricsContent.textContent = "No lyrics available for this track.";
+        }
+        
+        overlay.classList.add('visible');
+        lyricsModal.classList.add('visible');
+    }
+
+    function closeAllModals() {
+        overlay.classList.remove('visible');
+        infoModal.classList.remove('visible');
+        lyricsModal.classList.remove('visible');
+        welcomePopup.classList.remove('visible');
+    }
+
+    // --- Welcome Popup Logic (With LocalStorage Fix) ---
+    function showWelcomePopup() {
+        // Check local storage so we don't annoy users
+        const hasSeenWelcome = localStorage.getItem('seenWelcome');
+        if (!hasSeenWelcome) {
+            overlay.classList.add('visible');
+            welcomePopup.classList.add('visible');
         }
     }
-});
 
-// --- Event listeners for closing modals ---
-closeModalBtn.addEventListener('click', closeAllModals);
-closeLyricsModalBtn.addEventListener('click', closeAllModals);
-overlay.addEventListener('click', closeAllModals);
-// 🌟 Close welcome popup 🌟
-closeWelcomePopupBtn.addEventListener('click', closeAllModals);
-overlay.addEventListener('click', closeAllModals);
+    // Close button now saves the preference
+    if(closeWelcomePopupBtn) {
+        closeWelcomePopupBtn.addEventListener('click', () => {
+            closeAllModals();
+            localStorage.setItem('seenWelcome', 'true'); 
+        });
+    }
 
-
-// --- Event listeners for the audio player ---
-playerAudio.addEventListener('play', () => {
-    document.querySelectorAll('.album-art-circle').forEach(c => c.classList.remove('is-playing', 'spinning'));
-    const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
-    if (currentCircle) { currentCircle.classList.add('is-playing', 'spinning'); }
-});
-
-playerAudio.addEventListener('pause', () => {
-    const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
-    if (currentCircle) { currentCircle.classList.remove('is-playing', 'spinning'); }
-});
-
-
-// --- Intersection Observer for lazy loading images ---
-const lazyImages = document.querySelectorAll('.lazy-image');
-const imageObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const img = entry.target;
-            img.src = img.dataset.src;
-            img.classList.remove('lazy-image');
-            observer.unobserve(img);
+    // --- Event Listeners ---
+    
+    // Main Timeline Click Listener
+    timelineContainer.addEventListener('click', (event) => {
+        const target = event.target;
+        const timelineItem = target.closest('.timeline-item');
+        
+        if (timelineItem) {
+            const index = timelineItem.dataset.index;
+            
+            if (target.closest('.info-button')) {
+                showInfoModal(index);
+            } else if (target.closest('.lyrics-button')) {
+                showLyricsModal(index);
+            } else if (target.closest('.album-art-circle')) {
+                handleTrackClick(index);
+            }
         }
     });
-});
-lazyImages.forEach(img => { imageObserver.observe(img); });
 
-// 🌟 Show the welcome popup when the DOM is fully loaded 🌟
-showWelcomePopup();
-// --- Back to Top Button Logic ---
-const backToTopButton = document.getElementById('back-to-top-btn');
-window.addEventListener('scroll', () => {
-    if (window.scrollY > 300) {
-        backToTopButton.classList.add('visible');
-    } else {
-        backToTopButton.classList.remove('visible');
-    }
-});
-backToTopButton.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+    // Close Modal Listeners
+    if(closeModalBtn) closeModalBtn.addEventListener('click', closeAllModals);
+    if(closeLyricsModalBtn) closeLyricsModalBtn.addEventListener('click', closeAllModals);
+    if(overlay) overlay.addEventListener('click', closeAllModals);
 
-
-// --- Volume Button Logic ---
-const volumeBtn = document.getElementById('volume-btn');
-if (volumeBtn) {
-    volumeBtn.addEventListener('click', () => {
-        playerAudio.muted = !playerAudio.muted;
-        volumeBtn.textContent = playerAudio.muted ? "🔇" : "🔊";
+    // Audio Player Listeners
+    playerAudio.addEventListener('play', () => {
+        document.querySelectorAll('.album-art-circle').forEach(c => c.classList.remove('is-playing', 'spinning'));
+        // Find the circle by data-index to animate the correct one
+        const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
+        if (currentCircle) { currentCircle.classList.add('is-playing', 'spinning'); }
     });
-}
 
+    playerAudio.addEventListener('pause', () => {
+        const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
+        if (currentCircle) { currentCircle.classList.remove('is-playing', 'spinning'); }
+    });
+
+    // --- Initialize ---
+    showWelcomePopup();
+
+    // --- Back to Top Button ---
+    const backToTopButton = document.getElementById('back-to-top-btn');
+    if (backToTopButton) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+
+    // --- Volume Button ---
+    const volumeBtn = document.getElementById('volume-btn');
+    if (volumeBtn) {
+        volumeBtn.addEventListener('click', () => {
+            playerAudio.muted = !playerAudio.muted;
+            volumeBtn.textContent = playerAudio.muted ? "🔇" : "🔊";
+        });
+    }
 });
