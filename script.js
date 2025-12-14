@@ -676,6 +676,141 @@ document.addEventListener('DOMContentLoaded', () => {
             comment: "A comment about the track.",
             spotifyLink: "",
             soundcloudLink: "https://soundcloud.com/blaiz18765/mome"
+        },
+        // --- NEW SECTION: THE MOCKING STARS ---
+        {
+            type: 'header',
+            title: 'The Mocking Stars Era'
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "BLUE BOSSA",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/blue_bossa.mp3",
+            comment: "The opening track where Lausse compares himself to the mad, finding comfort in their company outside Sainsbury's.",
+            spotifyLink: "", 
+            soundcloudLink: "",
+            lyrics: [
+                "Intro",
+                "(Children whispering) 'Shhh…'",
+                "Lausse: 'Welcome back my dear children to the one and only Lausse The Cat Show!'",
+                "(Yeeyyyy!)",
+                "On narration back from the depths of hell itself please give it up for the one and only; Tree Wizard!",
+                "...",
+                "(See full lyrics on the Album Page)"
+            ]
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "I.D.W.G.A.J",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/i_d_w_g_a_j.mp3",
+            comment: "I Don't Wanna Get A Job. Lausse explores fantasies of wealth before settling on the freedom of a pirate's life.",
+            spotifyLink: "",
+            soundcloudLink: "",
+            lyrics: [
+                "Intro",
+                "The Tree Wizard: 'The rising Sun looked up at Lausse and said this…'",
+                "Sun to Lausse: 'Come hither, cat'",
+                "...",
+                "Prelude",
+                "If I had some P's I'd pass my driving license",
+                "Buy myself a Twingo",
+                "...",
+                "(See full lyrics on the Album Page)"
+            ]
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "THE MIDNIGHT HOUR",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/the_midnight_hour.mp3",
+            comment: "Lausse rejects the Sun and the day-to-day grind, choosing instead to hide behind the curtains and seek the moon.",
+            spotifyLink: "",
+            soundcloudLink: ""
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "THE MOCKING STARS",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/the_mocking_stars.mp3",
+            comment: "The 11-minute centerpiece. The sun abandons Earth, darkness falls, and Lausse sails to Mars to escape the chaos.",
+            spotifyLink: "",
+            soundcloudLink: ""
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "SPACE CADET CAT",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/space_cadet_cat.mp3",
+            comment: "Lausse arrives on Mars, hoping to leave his pain behind on Earth, only to realize his sadness followed him.",
+            spotifyLink: "",
+            soundcloudLink: ""
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "TEA PARTY",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/tea_party.mp3",
+            comment: "A surreal gathering with the Mad Hatter and friends on Mars, drinking gin and Guinness in limbo.",
+            spotifyLink: "",
+            soundcloudLink: ""
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "KEEP ON WALKING",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/keep_on_walking.mp3",
+            comment: "A flashback track detailing Lausse's travels through France and Berlin, living a bohemian life before returning.",
+            spotifyLink: "",
+            soundcloudLink: ""
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "THE MOONLIGHT WALTZ",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/the_moonlight_waltz.mp3",
+            comment: "Lausse finally meets the Moon. They dance, and a flower begins to bloom in his chest, signifying a return to feeling.",
+            spotifyLink: "",
+            soundcloudLink: ""
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "PEONIES FOR BREAKFAST",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/peonies_for_breakfast.mp3",
+            comment: "A beautiful track about finding love (a girl who sees the world through peonies) and the fear that comes with it.",
+            spotifyLink: "",
+            soundcloudLink: ""
+        },
+        {
+            type: 'song',
+            year: "6th November 2025",
+            artist: "LAUSSE THE CAT",
+            song: "LOTUS BLOSSOM",
+            image: "https://assets.laussehub.co.uk/assets/the-mocking-stars.jpg",
+            audio: "https://assets.laussehub.co.uk/assets/lotus_blossom.mp3",
+            comment: "The finale. Lausse accepts impermanence, says goodbye to the moon, and falls back to Earth to live.",
+            spotifyLink: "",
+            soundcloudLink: ""
         }
     ];
 
