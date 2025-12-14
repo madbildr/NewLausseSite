@@ -127,12 +127,13 @@
             });
 
             // 3. API Logic (Metadata + Progress)
-            function updateMetadata() {
-                // Fetch from AzuraCast API
-                fetch('https://radio.laussehub.co.uk/api/nowplaying/1')
+           function updateMetadata() {
+                // We add '?_=' + Date.now() to the URL.
+                // This forces the browser to fetch a NEW copy every time, ignoring the cache.
+                fetch('https://radio.laussehub.co.uk/api/nowplaying/1?_=' + Date.now())
                 .then(res => res.json())
                 .then(data => {
-                    // Update Info
+                    // Update Text Info
                     if(data.now_playing && data.now_playing.song) {
                         titleEl.textContent = data.now_playing.song.title;
                         artistEl.textContent = data.now_playing.song.artist;
@@ -140,9 +141,12 @@
                             artEl.src = data.now_playing.song.art;
                         }
                     }
-                    // Update Listeners
-                    if(data.listeners && data.listeners.total !== undefined) {
-                        listenerEl.textContent = `👥 ${data.listeners.total} Locked In`;
+                    
+                    // Update Listener Count (Use 'unique' instead of 'total')
+                    if(data.listeners) {
+                        // Fallback to 'total' if 'unique' is 0 or missing
+                        const count = data.listeners.unique || data.listeners.total;
+                        listenerEl.textContent = `👥 ${count} Locked In`;
                     }
 
                     // Update Progress Data
@@ -154,8 +158,7 @@
                 })
                 .catch(err => {
                     console.log("Radio API Error:", err);
-                    titleEl.textContent = "Lausse FM";
-                    artistEl.textContent = "Live Stream";
+                    // Don't change text on error, just keep previous state
                 });
             }
 
