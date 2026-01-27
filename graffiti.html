@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lausse The Cat: Graffiti Tracker</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <style>
+        body { margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; background: #111; }
+        .nav-header { position: absolute; top: 10px; left: 10px; z-index: 1000; }
+        .nav-header a { background: #000; color: white; padding: 8px 15px; text-decoration: none; border-radius: 4px; border: 1px solid #333; font-family: sans-serif; font-size: 0.9rem; }
+        #map { flex-grow: 1; width: 100%; height: 100%; }
+        
+        .add-btn { 
+            position: absolute; bottom: 30px; right: 20px; z-index: 1000; 
+            background: #E74C3C; color: white; border: none; width: 60px; height: 60px; 
+            border-radius: 50%; font-size: 30px; cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+        }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; justify-content: center; align-items: center; }
+        .modal-content { background: #222; padding: 25px; border-radius: 8px; width: 85%; max-width: 400px; color: white; font-family: sans-serif; }
+        .modal h2 { margin-top: 0; color: #E74C3C; }
+        
+        input[type="text"], input[type="file"] { width: 100%; margin: 10px 0; padding: 10px; box-sizing: border-box; background: #333; border: 1px solid #555; color: white; border-radius: 4px; }
+        
+        .btn-submit { background: #E74C3C; color: white; border: none; padding: 12px; width: 100%; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 10px; }
+        .btn-cancel { background: transparent; color: #aaa; border: 1px solid #555; padding: 10px; width: 100%; cursor: pointer; border-radius: 4px; margin-top: 10px; }
+        
+        .popup-img { width: 100%; height: 150px; object-fit: cover; border-radius: 4px; margin-bottom: 5px; background: #333; }
+        .missing-btn { font-size: 0.75rem; color: #aaa; text-decoration: underline; background: none; border: none; cursor: pointer; padding: 0; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="nav-header">
+        <a href="index.html">← Back to Hub</a>
+    </div>
+
+    <div id="map"></div>
+    <button class="add-btn" onclick="openModal()">+</button>
+
+    <div class="modal" id="addModal">
+        <div class="modal-content">
+            <h2>Report Sighting</h2>
+            <p id="gps-status" style="color: #bbb; font-size: 0.9em; margin-bottom: 15px;">Waiting for location...</p>
+            
+            <label>Photo:</label>
+            <input type="file" id="photoInput" accept="image/*">
+            
+            <label>Description:</label>
+            <input type="text" id="descInput" placeholder="e.g. Red cat on bin behind Tesco">
+            
+            <button class="btn-submit" onclick="submitSpot()">SUBMIT LOCATION</button>
+            <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Use Dark Matter map tiles for that Lausse vibe
+        const map = L.map('map').setView([51.4545, -2.5879], 13); // Default: Bristol
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            maxZoom: 20
+        }).addTo(map);
+
+        let currentLat = 0;
+        let currentLng = 0;
+
+        // Load existing spots
+        fetch('/api/graffiti')
+            .then(r => r.json())
+            .then(data => {
+                data.forEach(spot => {
+                    if(spot.missing_count >= 3) return; // Hide if 3 people reported missing
+                    
+                    L.marker([spot.lat, spot.lng]).addTo(map)
+                        .bindPopup(`
+                            <div style="min-width: 200px;">
+                                <img src="${spot.image_url}" class="popup-img" alt="Graffiti">
+                                <b>${spot.description}</b><br>
+                                <small style="color: #666;">Seen: ${new Date(spot.timestamp).toLocaleDateString()}</small><br>
+                                <button class="missing-btn" onclick="reportMissing('${spot.id}')">Is this gone?</button>
+                            </div>
+                        `);
+                });
+            })
+            .catch(err => console.error("Error loading spots:", err));
+
+        function openModal() {
+            document.getElementById('addModal').style.display = 'flex';
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        currentLat = pos.coords.latitude;
+                        currentLng = pos.coords.longitude;
+                        document.getElementById('gps-status').innerText = `✅ Location Locked: ${currentLat.toFixed(4)}, ${currentLng.toFixed(4)}`;
+                        document.getElementById('gps-status').style.color = '#2ecc71';
+                    }, 
+                    () => {
+                        document.getElementById('gps-status').innerText = "❌ GPS denied. Please enable location.";
+                        document.getElementById('gps-status').style.color = '#e74c3c';
+                    }
+                );
+            }
+        }
+        
+        function closeModal() { document.getElementById('addModal').style.display = 'none'; }
+
+        async function submitSpot() {
+            const fileInput = document.getElementById('photoInput');
+            const descInput = document.getElementById('descInput');
+
+            if(fileInput.files.length === 0) { alert("Please upload a photo"); return; }
+            if(!descInput.value) { alert("Please add a description"); return; }
+            if(currentLat === 0) { alert("Still waiting for GPS location..."); return; }
+
+            const formData = new FormData();
+            formData.append('photo', fileInput.files[0]);
+            formData.append('description', descInput.value);
+            formData.append('lat', currentLat);
+            formData.append('lng', currentLng);
+
+            const btn = document.querySelector('.btn-submit');
+            btn.innerText = "Uploading...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/graffiti', { method: 'POST', body: formData });
+                if(res.ok) {
+                    location.reload();
+                } else {
+                    alert("Upload failed. Try a smaller image?");
+                    btn.innerText = "SUBMIT LOCATION";
+                    btn.disabled = false;
+                }
+            } catch(e) {
+                alert("Error connecting to server.");
+            }
+        }
+
+        async function reportMissing(id) {
+            if(confirm("Report this graffiti as missing/removed?")) {
+                await fetch(`/api/graffiti/${id}/missing`, { method: 'POST' });
+                alert("Thanks for the update.");
+            }
+        }
+    </script>
+</body>
+</html>

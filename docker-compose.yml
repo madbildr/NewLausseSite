@@ -5,6 +5,15 @@ services:
     restart: always
     networks:
       - default
+  backend:
+    build: ./backend
+    restart: always
+    volumes:
+      - ./graffiti_data:/app/data        # Saves the JSON database to your host folder
+      - ./graffiti_uploads:/app/uploads  # Saves user photos to your host folder
+    networks:
+      - default
+
 networks:
   default:
     external: true
