@@ -1,16 +1,20 @@
 version: '3'
 services:
   website:
-    build: .              # <--- Changed from 'image: nginx'
+    build: .
     restart: always
     networks:
       - default
+
   backend:
     build: ./backend
     restart: always
     volumes:
-      - ./graffiti_data:/app/data        # Saves the JSON database to your host folder
-      - ./graffiti_uploads:/app/uploads  # Saves user photos to your host folder
+      - ./graffiti_data:/app/data
+      - ./graffiti_uploads:/app/uploads
+    # This line is key: it tells Docker to look for the file on the SERVER
+    environment:
+      - ADMIN_SECRET=${ADMIN_SECRET}
     networks:
       - default
 
@@ -18,4 +22,3 @@ networks:
   default:
     external: true
     name: clav
-
