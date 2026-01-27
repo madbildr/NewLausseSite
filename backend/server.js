@@ -10,10 +10,9 @@ const FileType = require('file-type');
 const app = express();
 const PORT = 3000;
 
-// 1. Trust Nginx (Needed for correct IP banning)
+// 1. Trust Nginx (Crucial for IP banning/voting to work)
 app.set('trust proxy', 1);
 
-// 2. SECURITY: Get Password from Docker Environment
 const ADMIN_SECRET = process.env.ADMIN_SECRET || 'default-insecure-password';
 
 app.use(cors());
@@ -49,19 +48,24 @@ const saveDB = (data) => fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2)
 
 // GET: Public Feed
 app.get('/api/graffiti', (req, res) => {
-    const data = getDB().filter(loc => loc.status === 'active').map(loc => ({
-        ...loc,
-        contributions: loc.contributions
-            .filter(c => (c.status === 'active' || !c.status) && (c.reports || 0) < 2)
-            .sort((a,b) => (b.up - b.down) - (a.up - a.down))
-    }));
+    const data = getDB()
+        .filter(loc => loc.status === 'active')
+        .map(loc => ({
+            ...loc,
+            contributions: loc.contributions
+                .filter(c => (c.status === 'active' || !c.status) && (c.reports || 0) < 2)
+                .sort((a,b) => (b.up - b.down) - (a.up - a.down))
+        }))
+        // FIX: Remove locations that have NO visible contributions
+        .filter(loc => loc.contributions.length > 0);
+        
     res.json(data);
 });
 
 // GET: Admin Feed (Protected)
 app.get('/api/admin/all', (req, res) => {
     if(req.query.secret !== ADMIN_SECRET) return res.sendStatus(403);
-    res.json(getDB());
+    res.json(getDB()); // Show everything, including removed/flagged
 });
 
 // POST: Upload New Pin
@@ -131,11 +135,6 @@ app.post('/api/report/:id', limiter, (req, res) => {
     const data = getDB();
     let found = false;
     data.forEach(loc => {
-        if(loc.id === req.params.id) {
-            loc.reports = (loc.reports || 0) + 1;
-            if(loc.reports >= 2) loc.status = 'flagged';
-            found = true;
-        }
         loc.contributions.forEach(c => {
             if(c.id === req.params.id) {
                 c.reports = (c.reports || 0) + 1;
@@ -151,7 +150,7 @@ app.post('/api/report/:id', limiter, (req, res) => {
 // POST: Vote
 app.post('/api/contribute/:id/vote', limiter, (req, res) => {
     const { type } = req.body;
-    const userHash = getHash(req.ip);
+    const userHash = getHash(req.ip); // Uses real IP from Nginx
     const data = getDB();
 
     for (const loc of data) {
@@ -159,23 +158,50 @@ app.post('/api/contribute/:id/vote', limiter, (req, res) => {
         if (contrib) {
             const existing = contrib.voters?.find(v => v.ip === userHash);
             if (!contrib.voters) contrib.voters = [];
+            
             if (existing) {
-                if (existing.type === type) return res.json({ msg: 'Already voted' });
-                contrib[existing.type]--; contrib[type]++; existing.type = type;
+                if (existing.type === type) return res.json({ msg: 'Already voted', success: false });
+                // Switch vote (e.g. Up to Down)
+                contrib[existing.type]--; 
+                contrib[type]++; 
+                existing.type = type;
             } else {
-                contrib[type]++; contrib.voters.push({ ip: userHash, type });
+                // New vote
+                contrib[type]++; 
+                contrib.voters.push({ ip: userHash, type });
             }
+            
             saveDB(data);
-            return res.json({ success: true });
+            return res.json({ success: true, up: contrib.up, down: contrib.down });
         }
     }
     res.sendStatus(404);
 });
 
-// ADMIN: Delete Content (Protected)
+// ADMIN: Restore Content (NEW)
+app.post('/api/admin/restore', (req, res) => {
+    if(req.body.secret !== ADMIN_SECRET) return res.sendStatus(403);
+    const { id } = req.body;
+    const data = getDB();
+
+    // Try to find contribution
+    let found = false;
+    data.forEach(loc => {
+        loc.contributions.forEach(c => {
+            if(c.id === id) {
+                c.status = 'active';
+                c.reports = 0;
+                found = true;
+            }
+        });
+    });
+    if(found) { saveDB(data); return res.json({success: true}); }
+    res.json({success: false});
+});
+
+// ADMIN: Delete Content
 app.post('/api/admin/delete', (req, res) => {
     if(req.body.secret !== ADMIN_SECRET) return res.sendStatus(403);
-
     const data = getDB();
     const { id, type } = req.body;
 
