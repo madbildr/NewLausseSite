@@ -100,6 +100,17 @@
         let activeLocationId = null;
         let pendingLat = 0, pendingLng = 0;
 
+        // XSS Protection Helper
+        function escapeHtml(text) {
+            if (!text) return "";
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         async function loadMap() {
             try {
                 const res = await fetch('/api/graffiti');
@@ -124,11 +135,13 @@
             loc.contributions.forEach(c => {
                 const date = new Date(c.timestamp).toLocaleDateString();
                 const img = c.type === 'image' ? `<img src="${c.url}" class="card-img">` : '';
+                
+                // Using escapeHtml here prevents scripts from running
                 content.innerHTML += `
                     <div class="card">
                         ${img}
                         <div class="card-body">
-                            <div>${c.text}</div>
+                            <div>${escapeHtml(c.text)}</div> 
                             <div style="font-size:0.8em; color:#666; margin-top:5px;">${date}</div>
                             <div class="vote-actions">
                                 <button onclick="vote('${c.id}', 'up')">▲</button>
