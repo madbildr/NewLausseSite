@@ -14,11 +14,26 @@
 
     <meta name="description" content="Discover the most comprehensive fan-made music timeline for Lausse The Cat. Explore every track, from the early Blu Man and Don Papa era to Redstripe Rhapsody. Including Lyrics to all the tracks and a new experience which is under construction.">
     
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Lausse Hub — Complete Music Timeline & Discography">
+    <meta property="og:description" content="The most comprehensive fan-made Lausse The Cat timeline. Explore every release from Blu Man to The Mocking Stars.">
+    <meta property="og:image" content="https://assets.laussehub.co.uk/assets/header-image-1.jpg">
+    <meta property="og:url" content="https://www.laussehub.co.uk/">
+    <meta property="og:site_name" content="Lausse Hub">
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Lausse Hub — Complete Music Timeline">
+    <meta name="twitter:description" content="Fan-made Lausse The Cat discography. Every track, every era.">
+    <meta name="twitter:image" content="https://assets.laussehub.co.uk/assets/header-image-1.jpg">
+    <meta name="theme-color" content="#E74C3C">
+    
     <title>Lausse The Cat: Complete Music Timeline & Discography Hub</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap" rel="stylesheet">
     <link rel="canonical" href="https://www.laussehub.co.uk/index.html" />
+    <link rel="manifest" href="/manifest.json">
 </head>
 <body class="antialiased">
     <div class="grain-overlay"></div>
@@ -29,6 +44,7 @@
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
     </button>
+    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode">☀️</button>
 
     <!-- Navigation -->
     <nav class="menu-overlay" id="menu-overlay">
@@ -47,6 +63,9 @@
             <p class="text-xs font-bold tracking-[0.3em] uppercase text-[#E74C3C] mb-4">Fan-Made Discography</p>
             <h1>Lausse Hub</h1>
             <p class="about-section">A timeline of every Lausse The Cat release. Press <span class="inline-flex items-center justify-center w-6 h-6 rounded-full border border-[#333] text-xs font-bold">+</span> for commentary, <span class="inline-flex items-center justify-center w-6 h-6 rounded-full border border-[#333] text-xs">♪</span> for lyrics, or click the art to play.</p>
+            <button id="random-track-btn" class="random-track-btn" aria-label="Play a random track">
+                <span class="random-dice">🎲</span> Random Track
+            </button>
         </div>
         <div class="header-images mt-8">
             <img src="https://assets.laussehub.co.uk/assets/header-image-1.jpg" alt="Lausse The Cat portrait" loading="lazy">
@@ -57,7 +76,11 @@
     <!-- Search -->
     <div class="search-container">
         <input type="text" id="timeline-search" placeholder="Search for a song, artist, or year...">
+        <div class="filter-chips" id="filter-chips"></div>
     </div>
+
+    <!-- Stats -->
+    <div class="stats-bar" id="stats-bar"></div>
 
     <!-- Timeline -->
     <main class="timeline-container" id="timeline-container"></main>
@@ -100,6 +123,7 @@
                 <circle class="progress-ring__bg" cx="32" cy="32" r="29" />
                 <circle class="progress-ring__fill" id="player-progress-ring" cx="32" cy="32" r="29" />
             </svg>
+            <canvas id="player-visualiser" class="player-visualiser" width="68" height="68"></canvas>
             <div id="player-album-art"></div>
         </div>
         <div class="player-info">
@@ -107,15 +131,23 @@
             <div id="player-artist-name">Artist Name</div>
         </div>
         <div class="side-player-controls">
-            <button id="player-prev-btn" class="sp-ctrl-btn" aria-label="Previous track">⏮</button>
             <button id="player-play-btn" class="sp-play-btn" aria-label="Play/Pause">▶</button>
-            <button id="player-next-btn" class="sp-ctrl-btn" aria-label="Next track">⏭</button>
+            <button id="player-lyrics-btn" class="sp-lyrics-btn" aria-label="View lyrics">♪</button>
+            <button id="volume-toggle-btn" class="sp-vol-btn" aria-label="Volume">🔊</button>
+            <div class="volume-slider-popup" id="volume-slider-popup">
+                <input type="range" id="volume-slider" min="0" max="100" value="80" orient="vertical" aria-label="Volume">
+            </div>
         </div>
         <div class="player-links" id="player-links"></div>
         <audio id="player-audio"></audio>
     </div>
 
     <script type="module" src="/src/js/pages/home.js"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
+    </script>
     <button id="back-to-top-btn" title="Go to top" aria-label="Back to top">↑</button>
 </body>
 </html>

@@ -4,9 +4,13 @@
  */
 import '../../styles/main.css';
 import { initMenu } from '../modules/menu.js';
+import { initPageTransitions } from '../modules/page-transitions.js';
+import { initThemeToggle } from '../modules/theme-toggle.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initMenu();
+  initPageTransitions();
+  initThemeToggle();
 
   // Elements
   const audio = document.getElementById('radio-stream');

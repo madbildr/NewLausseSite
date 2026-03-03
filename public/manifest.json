@@ -1,0 +1,21 @@
+{
+  "name": "Lausse Hub",
+  "short_name": "Lausse Hub",
+  "description": "The most comprehensive fan-made Lausse The Cat music timeline and discography.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#E74C3C",
+  "icons": [
+    {
+      "src": "https://assets.laussehub.co.uk/assets/header-image-1.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "https://assets.laussehub.co.uk/assets/header-image-1.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}

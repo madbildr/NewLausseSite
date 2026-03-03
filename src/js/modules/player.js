@@ -7,11 +7,46 @@ export function initPlayer(timelineData) {
   const playerAudio = document.getElementById('player-audio');
   const playerLinks = document.getElementById('player-links');
   const playBtn = document.getElementById('player-play-btn');
-  const prevBtn = document.getElementById('player-prev-btn');
-  const nextBtn = document.getElementById('player-next-btn');
   const progressRing = document.getElementById('player-progress-ring');
   const CIRCUMFERENCE = 2 * Math.PI * 29; // r=29
   let currentlyPlayingIndex = null;
+
+  // Audio visualiser setup
+  let audioCtx, analyser, source, dataArray, visCanvas, visCtx;
+  const visEl = document.getElementById('player-visualiser');
+  if (visEl) {
+    visCanvas = visEl;
+    visCtx = visCanvas.getContext('2d');
+  }
+
+  function initAudioContext() {
+    if (audioCtx) return;
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 64;
+    source = audioCtx.createMediaElementSource(playerAudio);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+    dataArray = new Uint8Array(analyser.frequencyBinCount);
+    drawVisualiser();
+  }
+
+  function drawVisualiser() {
+    if (!visCtx || !analyser) return;
+    requestAnimationFrame(drawVisualiser);
+    analyser.getByteFrequencyData(dataArray);
+    const w = visCanvas.width;
+    const h = visCanvas.height;
+    visCtx.clearRect(0, 0, w, h);
+    const bars = 8;
+    const barW = w / bars;
+    for (let i = 0; i < bars; i++) {
+      const val = dataArray[i + 2] / 255; // skip first two bins (DC)
+      const barH = val * h * 0.5;
+      visCtx.fillStyle = `rgba(231, 76, 60, ${0.3 + val * 0.4})`;
+      visCtx.fillRect(i * barW, h - barH, barW - 1, barH);
+    }
+  }
 
   // Progress ring setup
   if (progressRing) {
@@ -44,6 +79,7 @@ export function initPlayer(timelineData) {
       }
       bottomPlayer.classList.add('visible');
       playerAudio.play();
+      initAudioContext();
     }
   }
 
@@ -51,14 +87,22 @@ export function initPlayer(timelineData) {
   playerAudio.addEventListener('play', () => {
     if (playBtn) playBtn.textContent = '⏸';
     document.querySelectorAll('.album-art-circle').forEach(c => c.classList.remove('is-playing', 'spinning'));
-    const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
-    if (currentCircle) currentCircle.classList.add('is-playing', 'spinning');
+    document.querySelectorAll('.timeline-item').forEach(t => t.classList.remove('now-playing'));
+    const currentItem = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}']`);
+    if (currentItem) {
+      currentItem.classList.add('now-playing');
+      const circle = currentItem.querySelector('.album-art-circle');
+      if (circle) circle.classList.add('is-playing', 'spinning');
+    }
   });
 
   playerAudio.addEventListener('pause', () => {
     if (playBtn) playBtn.textContent = '▶';
-    const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
-    if (currentCircle) currentCircle.classList.remove('is-playing', 'spinning');
+    const currentItem = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}']`);
+    if (currentItem) {
+      const circle = currentItem.querySelector('.album-art-circle');
+      if (circle) circle.classList.remove('is-playing', 'spinning');
+    }
   });
 
   // Progress ring update
@@ -77,31 +121,33 @@ export function initPlayer(timelineData) {
     });
   }
 
-  // Prev/Next (skip through timeline items that have audio)
+  // Volume control
+  const volToggle = document.getElementById('volume-toggle-btn');
+  const volPopup = document.getElementById('volume-slider-popup');
+  const volSlider = document.getElementById('volume-slider');
+  playerAudio.volume = 0.8;
+
+  if (volToggle && volPopup) {
+    volToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      volPopup.classList.toggle('visible');
+    });
+    document.addEventListener('click', () => volPopup.classList.remove('visible'));
+    volPopup.addEventListener('click', (e) => e.stopPropagation());
+  }
+  if (volSlider) {
+    volSlider.addEventListener('input', (e) => {
+      const val = e.target.value / 100;
+      playerAudio.volume = val;
+      if (volToggle) volToggle.textContent = val === 0 ? '🔇' : val < 0.5 ? '🔉' : '🔊';
+    });
+  }
+
+  // Helper to get playable indices for auto-play
   function getPlayableIndices() {
     return timelineData
       .map((item, i) => item.audio ? i : -1)
       .filter(i => i !== -1);
-  }
-
-  if (prevBtn) {
-    prevBtn.addEventListener('click', () => {
-      const playable = getPlayableIndices();
-      if (!playable.length || currentlyPlayingIndex === null) return;
-      const pos = playable.indexOf(currentlyPlayingIndex);
-      const prev = pos > 0 ? playable[pos - 1] : playable[playable.length - 1];
-      handleTrackClick(prev);
-    });
-  }
-
-  if (nextBtn) {
-    nextBtn.addEventListener('click', () => {
-      const playable = getPlayableIndices();
-      if (!playable.length || currentlyPlayingIndex === null) return;
-      const pos = playable.indexOf(currentlyPlayingIndex);
-      const next = pos < playable.length - 1 ? playable[pos + 1] : playable[0];
-      handleTrackClick(next);
-    });
   }
 
   // Auto-play next track when current ends
