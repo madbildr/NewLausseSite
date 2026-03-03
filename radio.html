@@ -4,25 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lausse FM - Live Radio</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap" rel="stylesheet">
 </head>
-<body class="radio-page-body">
+<body class="radio-page-body antialiased">
+    <div class="grain-overlay"></div>
 
-    <button class="menu-button" id="menu-button">
+    <button class="menu-button" id="menu-button" aria-label="Open menu">
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
     </button>
 
     <nav class="menu-overlay" id="menu-overlay">
-        <ul>
-            <li><a href="index.html">TIMELINE</a></li>
-            <li><a href="radio.html" style="color: #E74C3C;">RADIO ● LIVE</a></li>
+        <ul class="space-y-1">
+            <li><a href="index.html">Timeline</a></li>
+            <li><a href="radio.html" class="!text-[#E74C3C]">RADIO ● LIVE</a></li>
             <li><a href="the-mocking-stars.html">Mocking Stars</a></li>
             <li><a href="about.html">About & FAQ</a></li>
-            <li><a href="https://www.reddit.com/r/Laussethecat/" target="_blank">Reddit</a></li>
+            <li><a href="https://www.reddit.com/r/Laussethecat/" target="_blank" rel="noopener">Reddit</a></li>
         </ul>
     </nav>
 
@@ -34,12 +34,12 @@
                     <div class="on-air-badge">● LIVE</div>
                     <div id="listener-count" class="listener-badge">Connecting...</div>
                 </div>
-                <h1>LAUSSE FM</h1>
-                <p style="color: #666; font-size: 0.9rem; margin-top: 5px;">24/7 Lo-Fi & Underground</p>
+                <h1 class="bg-gradient-to-r from-white to-gray-400 bg-clip-text text-transparent">LAUSSE FM</h1>
+                <p class="text-[#666] text-sm mt-1">24/7 Lo-Fi & Underground</p>
             </div>
 
             <div class="radio-visual">
-                <img src="https://assets.laussehub.co.uk/assets/lausse-welcome.png" alt="Radio Art" id="radio-art">
+                <img src="https://assets.laussehub.co.uk/assets/lausse-welcome.png" alt="Now Playing" id="radio-art" class="shadow-2xl">
             </div>
 
             <div class="now-playing-info">
@@ -56,11 +56,11 @@
             </div>
 
             <div class="radio-controls">
-                <button id="radio-play-btn" class="big-play-btn">▶</button>
-                <div style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                    <span style="font-size: 0.8rem;">🔈</span>
-                    <input type="range" id="radio-volume" min="0" max="1" step="0.1" value="1">
-                    <span style="font-size: 0.8rem;">🔊</span>
+                <button id="radio-play-btn" class="big-play-btn" aria-label="Play radio">▶</button>
+                <div class="flex items-center justify-center gap-2.5 w-full">
+                    <span class="text-xs opacity-60">🔈</span>
+                    <input type="range" id="radio-volume" min="0" max="1" step="0.1" value="1" class="w-32">
+                    <span class="text-xs opacity-60">🔊</span>
                 </div>
             </div>
         </div>
@@ -68,8 +68,9 @@
         <div class="radio-chat-container">
             <iframe 
                 src="https://chat.53clav.duckdns.org" 
-                style="border:0; width:100%; height:450px;"
-                title="Lausse Hub Chat">
+                class="border-0 w-full h-[450px]"
+                title="Lausse Hub Chat"
+                loading="lazy">
             </iframe>
         </div>
 
@@ -79,120 +80,6 @@
 
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            
-            // 1. Menu Logic
-            const menuButton = document.getElementById('menu-button');
-            menuButton.addEventListener('click', () => {
-                document.body.classList.toggle('menu-open');
-            });
-
-            // 2. Elements
-            const audio = document.getElementById('radio-stream');
-            const playBtn = document.getElementById('radio-play-btn');
-            const titleEl = document.getElementById('radio-song-title');
-            const artistEl = document.getElementById('radio-artist-name');
-            const artEl = document.getElementById('radio-art');
-            const listenerEl = document.getElementById('listener-count');
-            const volSlider = document.getElementById('radio-volume');
-            
-            const progressFill = document.getElementById('progress-fill');
-            const timeElapsedEl = document.getElementById('time-elapsed');
-            const timeTotalEl = document.getElementById('time-total');
-
-            let isPlaying = false;
-            let currentDuration = 0;
-            let currentElapsed = 0;
-
-            // Play Button Logic
-            playBtn.addEventListener('click', () => {
-                if (isPlaying) {
-                    audio.pause();
-                    playBtn.textContent = "▶";
-                    playBtn.classList.remove('playing');
-                } else {
-                    const currentSrc = audio.querySelector('source').src;
-                    audio.src = currentSrc; // Reload to jump to live
-                    audio.play();
-                    playBtn.textContent = "❚❚";
-                    playBtn.classList.add('playing');
-                }
-                isPlaying = !isPlaying;
-            });
-
-            // Volume Logic
-            volSlider.addEventListener('input', (e) => {
-                audio.volume = e.target.value;
-            });
-
-            // 3. API Logic (Metadata + Progress)
-           function updateMetadata() {
-                // We add '?_=' + Date.now() to the URL.
-                // This forces the browser to fetch a NEW copy every time, ignoring the cache.
-                fetch('https://radio.laussehub.co.uk/api/nowplaying/1?_=' + Date.now())
-                .then(res => res.json())
-                .then(data => {
-                    // Update Text Info
-                    if(data.now_playing && data.now_playing.song) {
-                        titleEl.textContent = data.now_playing.song.title;
-                        artistEl.textContent = data.now_playing.song.artist;
-                        if(data.now_playing.song.art) {
-                            artEl.src = data.now_playing.song.art;
-                        }
-                    }
-                    
-                    // Update Listener Count (Use 'unique' instead of 'total')
-                    if(data.listeners) {
-                        // Fallback to 'total' if 'unique' is 0 or missing
-                        const count = data.listeners.unique || data.listeners.total;
-                        listenerEl.textContent = `👥 ${count} Locked In`;
-                    }
-
-                    // Update Progress Data
-                    if(data.now_playing) {
-                        currentElapsed = data.now_playing.elapsed;
-                        currentDuration = data.now_playing.duration;
-                        updateProgressBar();
-                    }
-                })
-                .catch(err => {
-                    console.log("Radio API Error:", err);
-                    // Don't change text on error, just keep previous state
-                });
-            }
-
-            function updateProgressBar() {
-                const formatTime = (seconds) => {
-                    if (isNaN(seconds) || seconds === 0) return "0:00";
-                    const mins = Math.floor(seconds / 60);
-                    const secs = Math.floor(seconds % 60);
-                    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
-                };
-
-                timeElapsedEl.textContent = formatTime(currentElapsed);
-                timeTotalEl.textContent = formatTime(currentDuration);
-
-                if (currentDuration > 0) {
-                    const percent = (currentElapsed / currentDuration) * 100;
-                    progressFill.style.width = `${percent}%`;
-                } else {
-                    progressFill.style.width = '0%';
-                }
-            }
-
-            // Sync Interval
-            setInterval(updateMetadata, 10000); 
-            updateMetadata(); 
-
-            // Local Progress Timer (Smoothness)
-            setInterval(() => {
-                if (currentDuration > 0 && currentElapsed < currentDuration) {
-                    currentElapsed++;
-                    updateProgressBar();
-                }
-            }, 1000);
-        });
-    </script>
+    <script type="module" src="/src/js/pages/radio.js"></script>
 </body>
 </html>

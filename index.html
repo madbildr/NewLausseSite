@@ -15,94 +15,96 @@
     <meta name="description" content="Discover the most comprehensive fan-made music timeline for Lausse The Cat. Explore every track, from the early Blu Man and Don Papa era to Redstripe Rhapsody. Including Lyrics to all the tracks and a new experience which is under construction.">
     
     <title>Lausse The Cat: Complete Music Timeline & Discography Hub</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@400;700&display=swap" rel="stylesheet">
     <link rel="canonical" href="https://www.laussehub.co.uk/index.html" />
 </head>
-<body>
+<body class="antialiased">
     <div class="grain-overlay"></div>
-    <button class="menu-button" id="menu-button">
+
+    <!-- Menu Button -->
+    <button class="menu-button" id="menu-button" aria-label="Open menu">
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
         <div class="hamburger-line"></div>
     </button>
 
+    <!-- Navigation -->
     <nav class="menu-overlay" id="menu-overlay">
-        <ul>
+        <ul class="space-y-1">
             <li><a href="#">Home</a></li>
             <li><a href="the-mocking-stars.html">The Mocking Stars</a></li>
-            <li><a href="radio.html" style="color: #E74C3C;">RADIO ● LIVE</a></li>
+            <li><a href="radio.html" class="!text-[#E74C3C]">RADIO ● LIVE</a></li>
             <li><a href="about.html">About & FAQs</a></li>
             <li><a href="https://www.reddit.com/r/Laussethecat/" target="_blank" rel="noopener">Reddit</a></li>
         </ul>
     </nav>
 
+    <!-- Hero -->
     <header class="header-section">
         <div class="header-content">
+            <p class="text-xs font-bold tracking-[0.3em] uppercase text-[#E74C3C] mb-4">Fan-Made Discography</p>
             <h1>Lausse Hub</h1>
-            <p class="about-section">Below is a timeline of all Lausses music, press the + next to each track to discover some extra info and my thoughts on all the music.</p>
+            <p class="about-section">A timeline of every Lausse The Cat release. Press <span class="inline-flex items-center justify-center w-6 h-6 rounded-full border border-[#333] text-xs font-bold">+</span> for commentary, <span class="inline-flex items-center justify-center w-6 h-6 rounded-full border border-[#333] text-xs">♪</span> for lyrics, or click the art to play.</p>
         </div>
-        <div class="header-images">
-            <img src="https://assets.laussehub.co.uk/assets/header-image-1.jpg" alt="Descriptive alt text">
-            <img src="https://assets.laussehub.co.uk/assets/header-image-2.png" alt="Descriptive alt text">
+        <div class="header-images mt-8">
+            <img src="https://assets.laussehub.co.uk/assets/header-image-1.jpg" alt="Lausse The Cat portrait" loading="lazy">
+            <img src="https://assets.laussehub.co.uk/assets/header-image-2.png" alt="Lausse The Cat artwork" loading="lazy">
         </div>
     </header>
-    <div class="search-container">
-        <input type="text" id="timeline-search" placeholder="🔍 Search for a song, artist, or year...">
-        </div>
-    <main class="timeline-container" id="timeline-container">
-        
-       
-        </main>
 
+    <!-- Search -->
+    <div class="search-container">
+        <input type="text" id="timeline-search" placeholder="Search for a song, artist, or year...">
+    </div>
+
+    <!-- Timeline -->
+    <main class="timeline-container" id="timeline-container"></main>
+
+    <!-- Welcome Popup -->
     <div class="welcome-popup" id="welcome-popup">
-        <button class="close-modal-btn" id="close-welcome-popup-btn">&times;</button>
-        <img id="welcome-image" src="https://assets.laussehub.co.uk/assets/lausse-welcome.png" alt="Welcome Image">
+        <button class="close-modal-btn" id="close-welcome-popup-btn" aria-label="Close">&times;</button>
+        <img id="welcome-image" src="https://assets.laussehub.co.uk/assets/lausse-welcome.png" alt="Welcome">
         <div id="welcome-text-content">
-            <h3>Welcome to the fanmade Lausse The Cat Website!</h3>
-            <p>Below is a timeline of all his music, you can find everything about THE MOCKING STARS by clicking the link in the menu :)</p>
-            <p>Click on the Album Art to play, the + for comments, and the ♪ for lyrics (if available).</p>
-            <p>I hope you enjoy the site, feel free to join the conversation on r/Laussethecat</p>
+            <h3>Welcome to the Lausse Hub!</h3>
+            <p>The most comprehensive fan-made Lausse The Cat timeline. Explore every release from Blu Man to Redstripe Rhapsody.</p>
+            <p class="mt-3 text-sm opacity-70">Click album art to play &bull; <strong>+</strong> for commentary &bull; <strong>♪</strong> for lyrics</p>
+            <p class="mt-4"><a href="https://www.reddit.com/r/Laussethecat/" target="_blank" rel="noopener" class="inline-block px-5 py-2 rounded-full border border-[#E74C3C] text-[#E74C3C] text-sm font-bold hover:bg-[#E74C3C] hover:text-white transition-all duration-300 no-underline">Join r/Laussethecat</a></p>
         </div>
     </div>
     <div class="modal-overlay" id="modal-overlay"></div>
 
+    <!-- Info Modal -->
     <div class="info-modal" id="info-modal">
-        <button class="close-modal-btn" id="close-modal-btn">&times;</button>
+        <button class="close-modal-btn" id="close-modal-btn" aria-label="Close">&times;</button>
         <img id="modal-album-art" src="" alt="Album Art">
         <h2 id="modal-song-title">Song Title</h2>
         <h3 id="modal-artist-name">Artist Name</h3>
-        <p id="modal-comment">Song information and comments will appear here.</p>
+        <p id="modal-comment" class="text-sm leading-relaxed text-[#999] mt-4">Song information and comments will appear here.</p>
     </div>
 
+    <!-- Lyrics Modal -->
     <div class="lyrics-modal" id="lyrics-modal">
-    <button class="close-modal-btn" id="close-lyrics-modal-btn">&times;</button>
-    <img id="lyrics-modal-album-art" src="" alt="Album Art">
-    <h2 id="lyrics-modal-song-title">Song Title</h2>
-    <h3 id="lyrics-modal-artist-name">Artist Name</h3>
-    <div id="modal-lyrics-content">Lyrics will appear here.</div>
+        <button class="close-modal-btn" id="close-lyrics-modal-btn" aria-label="Close">&times;</button>
+        <img id="lyrics-modal-album-art" src="" alt="Album Art">
+        <h2 id="lyrics-modal-song-title">Song Title</h2>
+        <h3 id="lyrics-modal-artist-name">Artist Name</h3>
+        <div id="modal-lyrics-content">Lyrics will appear here.</div>
     </div>
     
+    <!-- Bottom Player -->
     <div class="bottom-player" id="bottom-player">
         <div id="player-album-art"></div>
         <div class="player-info">
             <div id="player-song-title">Song Title</div>
             <div id="player-artist-name">Artist Name</div>
         </div>
-        
-        <div class="player-links" id="player-links">
-            </div>
-
+        <div class="player-links" id="player-links"></div>
         <audio id="player-audio" controls></audio>
-        
-        
-        </div>
+    </div>
 
-    <script src="script.js"></script>
-
-    <button id="back-to-top-btn" title="Go to top">↑</button>
-
+    <script type="module" src="/src/js/pages/home.js"></script>
+    <button id="back-to-top-btn" title="Go to top" aria-label="Back to top">↑</button>
 </body>
 </html>

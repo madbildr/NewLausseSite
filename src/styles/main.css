@@ -1,0 +1,9 @@
+/* Tailwind CSS v4 - available for utility classes across all pages */
+@import "tailwindcss";
+
+/*
+ * Import existing custom styles.
+ * These override Tailwind's base where they conflict,
+ * preserving the original look of the site.
+ */
+@import "../../style.css";
