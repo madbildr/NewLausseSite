@@ -93,15 +93,26 @@
         <div id="modal-lyrics-content">Lyrics will appear here.</div>
     </div>
     
-    <!-- Bottom Player -->
+    <!-- Side Player -->
     <div class="bottom-player" id="bottom-player">
-        <div id="player-album-art"></div>
+        <div class="side-player-art-wrap">
+            <svg class="progress-ring" viewBox="0 0 64 64">
+                <circle class="progress-ring__bg" cx="32" cy="32" r="29" />
+                <circle class="progress-ring__fill" id="player-progress-ring" cx="32" cy="32" r="29" />
+            </svg>
+            <div id="player-album-art"></div>
+        </div>
         <div class="player-info">
             <div id="player-song-title">Song Title</div>
             <div id="player-artist-name">Artist Name</div>
         </div>
+        <div class="side-player-controls">
+            <button id="player-prev-btn" class="sp-ctrl-btn" aria-label="Previous track">⏮</button>
+            <button id="player-play-btn" class="sp-play-btn" aria-label="Play/Pause">▶</button>
+            <button id="player-next-btn" class="sp-ctrl-btn" aria-label="Next track">⏭</button>
+        </div>
         <div class="player-links" id="player-links"></div>
-        <audio id="player-audio" controls></audio>
+        <audio id="player-audio"></audio>
     </div>
 
     <script type="module" src="/src/js/pages/home.js"></script>

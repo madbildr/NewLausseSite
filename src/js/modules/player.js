@@ -6,7 +6,18 @@ export function initPlayer(timelineData) {
   const bottomPlayer = document.getElementById('bottom-player');
   const playerAudio = document.getElementById('player-audio');
   const playerLinks = document.getElementById('player-links');
+  const playBtn = document.getElementById('player-play-btn');
+  const prevBtn = document.getElementById('player-prev-btn');
+  const nextBtn = document.getElementById('player-next-btn');
+  const progressRing = document.getElementById('player-progress-ring');
+  const CIRCUMFERENCE = 2 * Math.PI * 29; // r=29
   let currentlyPlayingIndex = null;
+
+  // Progress ring setup
+  if (progressRing) {
+    progressRing.style.strokeDasharray = CIRCUMFERENCE;
+    progressRing.style.strokeDashoffset = CIRCUMFERENCE;
+  }
 
   function handleTrackClick(index) {
     const isSameTrack = (currentlyPlayingIndex === index);
@@ -36,30 +47,71 @@ export function initPlayer(timelineData) {
     }
   }
 
-  // Play/pause visual feedback on album art circles
+  // Play/pause visual feedback
   playerAudio.addEventListener('play', () => {
+    if (playBtn) playBtn.textContent = '⏸';
     document.querySelectorAll('.album-art-circle').forEach(c => c.classList.remove('is-playing', 'spinning'));
     const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
-    if (currentCircle) {
-      currentCircle.classList.add('is-playing', 'spinning');
-    }
+    if (currentCircle) currentCircle.classList.add('is-playing', 'spinning');
   });
 
   playerAudio.addEventListener('pause', () => {
+    if (playBtn) playBtn.textContent = '▶';
     const currentCircle = document.querySelector(`.timeline-item[data-index='${currentlyPlayingIndex}'] .album-art-circle`);
-    if (currentCircle) {
-      currentCircle.classList.remove('is-playing', 'spinning');
+    if (currentCircle) currentCircle.classList.remove('is-playing', 'spinning');
+  });
+
+  // Progress ring update
+  playerAudio.addEventListener('timeupdate', () => {
+    if (progressRing && playerAudio.duration) {
+      const pct = playerAudio.currentTime / playerAudio.duration;
+      progressRing.style.strokeDashoffset = CIRCUMFERENCE * (1 - pct);
     }
   });
 
-  // Volume button
-  const volumeBtn = document.getElementById('volume-btn');
-  if (volumeBtn) {
-    volumeBtn.addEventListener('click', () => {
-      playerAudio.muted = !playerAudio.muted;
-      volumeBtn.textContent = playerAudio.muted ? '🔇' : '🔊';
+  // Play/pause button
+  if (playBtn) {
+    playBtn.addEventListener('click', () => {
+      if (playerAudio.paused) playerAudio.play();
+      else playerAudio.pause();
     });
   }
+
+  // Prev/Next (skip through timeline items that have audio)
+  function getPlayableIndices() {
+    return timelineData
+      .map((item, i) => item.audio ? i : -1)
+      .filter(i => i !== -1);
+  }
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', () => {
+      const playable = getPlayableIndices();
+      if (!playable.length || currentlyPlayingIndex === null) return;
+      const pos = playable.indexOf(currentlyPlayingIndex);
+      const prev = pos > 0 ? playable[pos - 1] : playable[playable.length - 1];
+      handleTrackClick(prev);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', () => {
+      const playable = getPlayableIndices();
+      if (!playable.length || currentlyPlayingIndex === null) return;
+      const pos = playable.indexOf(currentlyPlayingIndex);
+      const next = pos < playable.length - 1 ? playable[pos + 1] : playable[0];
+      handleTrackClick(next);
+    });
+  }
+
+  // Auto-play next track when current ends
+  playerAudio.addEventListener('ended', () => {
+    const playable = getPlayableIndices();
+    if (!playable.length || currentlyPlayingIndex === null) return;
+    const pos = playable.indexOf(currentlyPlayingIndex);
+    const next = pos < playable.length - 1 ? playable[pos + 1] : playable[0];
+    handleTrackClick(next);
+  });
 
   return { handleTrackClick, getCurrentIndex: () => currentlyPlayingIndex };
 }
