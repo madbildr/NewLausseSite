@@ -5,7 +5,6 @@
 export function initPlayer(timelineData) {
   const bottomPlayer = document.getElementById('bottom-player');
   const playerAudio = document.getElementById('player-audio');
-  playerAudio.crossOrigin = 'anonymous';
   const playerLinks = document.getElementById('player-links');
   const playBtn = document.getElementById('player-play-btn');
   const progressRing = document.getElementById('player-progress-ring');

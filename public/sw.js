@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lausse-hub-v1';
+const CACHE_NAME = 'lausse-hub-v2';
 const PRECACHE_URLS = [
   '/',
   '/index.html',
