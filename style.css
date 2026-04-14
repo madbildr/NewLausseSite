@@ -674,24 +674,15 @@ body.menu-open .hamburger-line:nth-child(3) {
 .album-art-circle:hover .play-icon { opacity: 0.9; }
 .album-art-circle.is-playing .pause-icon { opacity: 0.9; }
 .album-art-circle.is-playing:hover .play-icon { opacity: 0; }
+.album-art-circle.is-playing {
+  box-shadow: var(--shadow-glow), 0 8px 30px rgba(0, 0, 0, 0.6);
+}
+.album-art-circle.is-playing::before {
+  opacity: 1;
+}
 
 .album-art-circle.spinning { animation: spin 10s linear infinite; }
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-
-/* Now-playing glow on timeline card */
-.timeline-item.now-playing .timeline-content {
-  box-shadow: 0 0 20px var(--accent-glow), 0 0 60px rgba(231, 76, 60, 0.08);
-  border-color: var(--accent) !important;
-}
-.timeline-item.now-playing .timeline-point {
-  background: var(--accent);
-  box-shadow: 0 0 12px var(--accent-glow);
-  animation: now-playing-pulse 2s ease-in-out infinite;
-}
-@keyframes now-playing-pulse {
-  0%, 100% { box-shadow: 0 0 12px var(--accent-glow); }
-  50% { box-shadow: 0 0 24px var(--accent-glow), 0 0 40px rgba(231, 76, 60, 0.15); }
-}
 
 /* ============================================ */
 /* ACTION BUTTONS (+, music note)               */
