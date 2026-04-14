@@ -5,6 +5,7 @@
 export function initPlayer(timelineData) {
   const bottomPlayer = document.getElementById('bottom-player');
   const playerAudio = document.getElementById('player-audio');
+  playerAudio.crossOrigin = 'anonymous';
   const playerLinks = document.getElementById('player-links');
   const playBtn = document.getElementById('player-play-btn');
   const progressRing = document.getElementById('player-progress-ring');
@@ -19,8 +20,25 @@ export function initPlayer(timelineData) {
     visCtx = visCanvas.getContext('2d');
   }
 
+  function isCrossOriginSource(src) {
+    if (!src) return false;
+    try {
+      const parsed = new URL(src, window.location.href);
+      return parsed.origin !== window.location.origin;
+    } catch {
+      return false;
+    }
+  }
+
+  function canUseWebAudioForCurrentTrack() {
+    if (!visCtx) return false;
+    const src = playerAudio.currentSrc || playerAudio.src;
+    return !!src && !isCrossOriginSource(src);
+  }
+
   function initAudioContext() {
     if (audioCtx) return;
+    if (!canUseWebAudioForCurrentTrack()) return;
     try {
       audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       analyser = audioCtx.createAnalyser();
