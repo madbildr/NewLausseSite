@@ -21,14 +21,36 @@ export function initPlayer(timelineData) {
 
   function initAudioContext() {
     if (audioCtx) return;
-    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 64;
-    source = audioCtx.createMediaElementSource(playerAudio);
-    source.connect(analyser);
-    analyser.connect(audioCtx.destination);
-    dataArray = new Uint8Array(analyser.frequencyBinCount);
-    drawVisualiser();
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64;
+      source = audioCtx.createMediaElementSource(playerAudio);
+      source.connect(analyser);
+      analyser.connect(audioCtx.destination);
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      drawVisualiser();
+    } catch (error) {
+      audioCtx = null;
+      analyser = null;
+      source = null;
+      dataArray = null;
+    }
+  }
+
+  function resumeAudioContext() {
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume().catch(() => {});
+    }
+  }
+
+  function playCurrentAudio() {
+    initAudioContext();
+    resumeAudioContext();
+    const playPromise = playerAudio.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+      playPromise.catch(() => {});
+    }
   }
 
   function drawVisualiser() {
@@ -58,7 +80,7 @@ export function initPlayer(timelineData) {
     const isSameTrack = (currentlyPlayingIndex === index);
     if (isSameTrack) {
       if (playerAudio.paused) {
-        playerAudio.play();
+        playCurrentAudio();
       } else {
         playerAudio.pause();
       }
@@ -78,8 +100,7 @@ export function initPlayer(timelineData) {
         playerLinks.innerHTML += `<a href="${itemData.soundcloudLink}" target="_blank" class="social-link soundcloud"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.53,8.71A7.27,7.27,0,0,0,15.1,6.56V15.3a2,2,0,0,1-2,2,2,2,0,0,1-2-2,2,2,0,0,1-2-2,1,1,0,0,0,1-1V9.56a4.4,4.4,0,0,0-4.4-4.4,4.36,4.36,0,0,0-4.07,2.83,1,1,0,0,0,1,1.17,1,1,0,0,0,1-.8,2.4,2.4,0,0,1,2.1-1.2,2.35,2.35,0,0,1,2.4,2.4V15.3a4,4,0,0,0,4,4,4,4,0,0,0,4-4,1,1,0,0,0-1-1,1,1,0,0,0-1,1,2,2,0,0,1-2,2,2,2,0,0,1-2-2V8.92a1,1,0,0,0-1-1V6.56A5.27,5.27,0,0,1,21.5,8a1,1,0,0,0,1.05.14A1,1,0,0,0,21.53,8.71Z"></path></svg><span>SoundCloud</span></a>`;
       }
       bottomPlayer.classList.add('visible');
-      playerAudio.play();
-      initAudioContext();
+      playCurrentAudio();
     }
   }
 
@@ -116,7 +137,7 @@ export function initPlayer(timelineData) {
   // Play/pause button
   if (playBtn) {
     playBtn.addEventListener('click', () => {
-      if (playerAudio.paused) playerAudio.play();
+      if (playerAudio.paused) playCurrentAudio();
       else playerAudio.pause();
     });
   }
